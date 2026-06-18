@@ -1,666 +1,527 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PSX Trade Calculator — JS Global</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PSX Trade Calculator</title>
 <style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #22263a;
-    --border: #2e3350;
-    --accent: #00d4aa;
-    --accent-dim: rgba(0,212,170,0.12);
-    --accent-dim2: rgba(0,212,170,0.06);
-    --text: #e8eaf0;
-    --text-muted: #7b82a0;
-    --text-dim: #4a5070;
-    --green: #22c55e;
-    --green-dim: rgba(34,197,94,0.12);
-    --red: #ef4444;
-    --red-dim: rgba(239,68,68,0.12);
-    --amber: #f59e0b;
-    --amber-dim: rgba(245,158,11,0.12);
-    --blue: #3b82f6;
-    --blue-dim: rgba(59,130,246,0.12);
-    --font: 'Inter', system-ui, -apple-system, sans-serif;
-    --mono: 'JetBrains Mono', 'Fira Code', monospace;
-    --r: 8px;
-    --r-lg: 12px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; }
-  body { min-height: 100vh; padding-bottom: 4rem; }
-
-  /* FONTS */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
-  /* HEADER */
-  header {
-    background: linear-gradient(135deg, #0f1117 0%, #1a1d27 50%, #0f1117 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 2rem 0 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 240px; height: 240px;
-    background: radial-gradient(circle, rgba(0,212,170,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-icon {
-    width: 40px; height: 40px;
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    border-radius: var(--r);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-  .brand-text h1 { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
-  .brand-text p { font-size: 12px; color: var(--text-muted); }
-  .header-badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .badge {
-    font-size: 11px; font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    background: var(--surface);
-  }
-  .badge.green { border-color: var(--green); color: var(--green); background: var(--green-dim); }
-
-  /* MAIN */
-  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 0; }
-
-  /* SECTIONS */
-  .section { margin-bottom: 1.75rem; }
-  .section-label {
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* FORM CARD */
-  .form-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 1.5rem;
-  }
-
-  /* GRID */
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  @media (max-width: 600px) {
-    .grid-3 { grid-template-columns: 1fr 1fr; }
-    .grid-2 { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 400px) {
-    .grid-3 { grid-template-columns: 1fr; }
-  }
-
-  /* FIELDS */
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-  .input-wrap { position: relative; }
-  .input-prefix {
-    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
-    font-size: 13px; color: var(--text-dim); font-family: var(--mono);
-    pointer-events: none;
-  }
-  input[type="number"], input[type="text"] {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 14px;
-    padding: 9px 12px;
-    transition: border-color 0.15s;
-    -moz-appearance: textfield;
-  }
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  input.has-prefix { padding-left: 36px; }
-  input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,170,0.08); }
-  input:hover { border-color: #3e4460; }
-  input[readonly] { opacity: 0.5; cursor: default; }
-
-  /* TOGGLE GROUP */
-  .toggle-group { display: flex; gap: 6px; flex-wrap: wrap; }
-  .toggle-btn {
-    flex: 1; min-width: 90px;
-    padding: 8px 12px;
-    font-size: 12px; font-weight: 500;
-    border-radius: var(--r);
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: center;
-  }
-  .toggle-btn:hover { border-color: #3e4460; color: var(--text); }
-  .toggle-btn.active {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* BROKER RATE */
-  .rate-info {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px; color: var(--text-muted);
-    background: var(--accent-dim2);
-    border: 1px solid rgba(0,212,170,0.15);
-    border-radius: var(--r);
-    padding: 8px 12px;
-    margin-bottom: 12px;
-  }
-  .rate-info .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-
-  /* CALC BUTTON */
-  .calc-btn {
-    width: 100%;
-    padding: 13px;
-    font-size: 15px; font-weight: 600;
-    border-radius: var(--r);
-    border: none;
-    background: var(--accent);
-    color: #0f1117;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-    letter-spacing: -0.01em;
-    margin-top: 4px;
-  }
-  .calc-btn:hover { opacity: 0.9; }
-  .calc-btn:active { transform: scale(0.99); }
-
-  /* RESULTS */
-  #results { display: none; }
-
-  /* SUMMARY STRIP */
-  .summary-strip {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-  @media (max-width: 600px) { .summary-strip { grid-template-columns: 1fr 1fr; } }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 1rem 1.25rem;
-  }
-  .stat-card.profit { border-color: rgba(34,197,94,0.3); background: var(--green-dim); }
-  .stat-card.loss { border-color: rgba(239,68,68,0.3); background: var(--red-dim); }
-  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
-  .stat-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--text); }
-  .stat-card.profit .stat-val { color: var(--green); }
-  .stat-card.loss .stat-val { color: var(--red); }
-  .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
-
-  /* DUAL RESULTS (filer vs non-filer) */
-  .dual-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 1.5rem;
-  }
-  @media (max-width: 600px) { .dual-panel { grid-template-columns: 1fr; } }
-
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-  }
-  .panel-header {
-    padding: 10px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-  .panel-title { font-size: 13px; font-weight: 600; }
-  .filer-badge, .nonfiler-badge {
-    font-size: 10px; font-weight: 600;
-    padding: 3px 8px; border-radius: 999px;
-    letter-spacing: 0.04em; text-transform: uppercase;
-  }
-  .filer-badge { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-  .nonfiler-badge { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
-
-  /* BREAKDOWN TABLE */
-  .breakdown {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    margin-bottom: 14px;
-  }
-  .breakdown-header {
-    padding: 10px 16px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 8px;
-  }
-  .breakdown-title { font-size: 13px; font-weight: 600; color: var(--text); }
-  .breakdown-total { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
-  table.breakdown-table { width: 100%; border-collapse: collapse; }
-  table.breakdown-table td {
-    padding: 8px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-  table.breakdown-table tr:last-child td { border-bottom: none; }
-  .td-label { color: var(--text-muted); }
-  .td-val { text-align: right; font-family: var(--mono); font-weight: 500; color: var(--text); white-space: nowrap; }
-  .td-note { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-  .row-subtotal td { background: var(--surface2); font-weight: 600; }
-  .row-subtotal .td-label { color: var(--text); }
-  .row-subtotal .td-val { color: var(--accent); }
-  .row-cgt-filer td { background: rgba(34,197,94,0.04); }
-  .row-cgt-nonfiler td { background: rgba(245,158,11,0.04); }
-
-  /* PILL */
-  .pill {
-    display: inline-block;
-    font-size: 10px; font-weight: 600;
-    padding: 2px 7px; border-radius: 999px;
-    text-transform: uppercase; letter-spacing: 0.04em;
-    margin-left: 6px; vertical-align: middle;
-  }
-  .pill-green { background: var(--green-dim); color: var(--green); }
-  .pill-amber { background: var(--amber-dim); color: var(--amber); }
-
-  /* NOTE */
-  .note-box {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: var(--r);
-    padding: 12px 16px;
-    font-size: 12px; color: var(--text-muted);
-    line-height: 1.7;
-    margin-top: 1rem;
-  }
-
-  /* FOOTER */
-  footer {
-    margin-top: 3rem;
-    border-top: 1px solid var(--border);
-    padding: 1.5rem 0;
-    text-align: center;
-    font-size: 12px; color: var(--text-dim);
-  }
-  footer max-width { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+:root{--bg:#0f1117;--sf:#1a1d27;--sf2:#22263a;--bd:#2e3350;--ac:#00d4aa;--acd:rgba(0,212,170,.12);--acd2:rgba(0,212,170,.06);--tx:#e8eaf0;--tm:#7b82a0;--td:#4a5070;--gr:#22c55e;--grd:rgba(34,197,94,.12);--rd:#ef4444;--rdd:rgba(239,68,68,.12);--am:#f59e0b;--amd:rgba(245,158,11,.12);--bl:#3b82f6;--bld:rgba(59,130,246,.12);--fn:'Inter',system-ui,sans-serif;--mn:'JetBrains Mono','Fira Code',monospace;--r:8px;--rl:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;line-height:1.6}
+body{min-height:100vh;padding-bottom:4rem}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+header{background:linear-gradient(135deg,#0f1117,#1a1d27,#0f1117);border-bottom:1px solid var(--bd);padding:2rem 0 1.5rem;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(0,212,170,.08),transparent 70%);pointer-events:none}
+.hi{max-width:960px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.brand{display:flex;align-items:center;gap:12px}
+.bi{width:40px;height:40px;background:var(--acd);border:1px solid var(--ac);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px}
+.bt h1{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.bt p{font-size:12px;color:var(--tm)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:500;padding:4px 10px;border-radius:999px;border:1px solid var(--bd);color:var(--tm);background:var(--sf)}
+.badge.gr{border-color:var(--gr);color:var(--gr);background:var(--grd)}
+.badge.ac{border-color:var(--ac);color:var(--ac);background:var(--acd)}
+main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 0}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:4px}
+.tab{flex:1;padding:8px 12px;font-size:13px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
+.tab:hover{color:var(--tx)}
+.tab.active{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
+.tp{display:none}
+.tp.active{display:block}
+.sec{margin-bottom:1.75rem}
+.sl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--td);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.fc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:640px){.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+@media(max-width:400px){.g3,.g4,.g2{grid-template-columns:1fr}}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:12px;color:var(--tm);font-weight:500}
+.iw{position:relative}
+.ip{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--td);font-family:var(--mn);pointer-events:none}
+input[type=number],input[type=text],select{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--mn);font-size:14px;padding:9px 12px;transition:border-color .15s;-moz-appearance:textfield}
+select{font-family:var(--fn)}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input.hp{padding-left:36px}
+input:focus,select:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
+input:hover,select:hover{border-color:#3e4460}
+input[readonly]{opacity:.5;cursor:default}
+.tg{display:flex;gap:6px;flex-wrap:wrap}
+.tb{flex:1;min-width:90px;padding:8px 12px;font-size:12px;font-weight:500;border-radius:var(--r);border:1px solid var(--bd);background:var(--bg);color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
+.tb:hover{border-color:#3e4460;color:var(--tx)}
+.tb.active{background:var(--acd);border-color:var(--ac);color:var(--ac)}
+.ri{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tm);background:var(--acd2);border:1px solid rgba(0,212,170,.15);border-radius:var(--r);padding:8px 12px;margin-bottom:12px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0}
+.btn{padding:10px 20px;font-size:14px;font-weight:600;border-radius:var(--r);border:none;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:-.01em}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--ac);color:#0f1117;width:100%;padding:13px;font-size:15px;margin-top:4px}
+.btn-p:hover{opacity:.88}
+.btn-s{background:var(--grd);color:var(--gr);border:1px solid rgba(34,197,94,.35);font-size:13px}
+.btn-s:hover{opacity:.85}
+.btn-s:disabled{opacity:.35;cursor:not-allowed}
+.btn-e{background:var(--bld);color:var(--bl);border:1px solid rgba(59,130,246,.35);font-size:13px}
+.btn-e:hover{opacity:.85}
+.btn-st{background:var(--sf2);color:var(--tm);border:1px solid var(--bd);font-size:13px}
+.btn-st:hover{color:var(--tx)}
+.btn-d{background:var(--rdd);color:var(--rd);border:1px solid rgba(239,68,68,.35);font-size:12px;padding:6px 14px}
+#results{display:none}
+.ss{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+@media(max-width:600px){.ss{grid-template-columns:1fr 1fr}}
+.sc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1rem 1.25rem}
+.sc.pf{border-color:rgba(34,197,94,.3);background:var(--grd)}
+.sc.ls{border-color:rgba(239,68,68,.3);background:var(--rdd)}
+.sl2{font-size:11px;color:var(--tm);font-weight:500;margin-bottom:6px}
+.sv{font-family:var(--mn);font-size:18px;font-weight:500;color:var(--tx)}
+.sc.pf .sv{color:var(--gr)}
+.sc.ls .sv{color:var(--rd)}
+.ss2{font-size:11px;color:var(--tm);margin-top:3px}
+.dp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
+@media(max-width:600px){.dp{grid-template-columns:1fr}}
+.pnl{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.ph{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);background:var(--sf2)}
+.pt{font-size:13px;font-weight:600}
+.fb,.nfb{font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
+.fb{background:var(--grd);color:var(--gr);border:1px solid rgba(34,197,94,.3)}
+.nfb{background:var(--amd);color:var(--am);border:1px solid rgba(245,158,11,.3)}
+.bkd{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:14px}
+.bh{padding:10px 16px;background:var(--sf2);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.btt{font-size:13px;font-weight:600}
+.btv{font-family:var(--mn);font-size:13px;color:var(--tm)}
+table.bt{width:100%;border-collapse:collapse}
+table.bt td{padding:8px 16px;font-size:13px;border-bottom:1px solid var(--bd);vertical-align:middle}
+table.bt tr:last-child td{border-bottom:none}
+.tl{color:var(--tm)}
+.tv{text-align:right;font-family:var(--mn);font-weight:500;white-space:nowrap}
+.tn{font-size:11px;color:var(--td);margin-top:2px}
+.rst td{background:var(--sf2);font-weight:600}
+.rst .tl{color:var(--tx)}
+.rst .tv{color:var(--ac)}
+.rcf td{background:rgba(34,197,94,.04)}
+.rcn td{background:rgba(245,158,11,.04)}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;margin-left:6px;vertical-align:middle}
+.pg{background:var(--grd);color:var(--gr)}
+.pa{background:var(--amd);color:var(--am)}
+.sp{background:var(--sf);border:1px solid rgba(34,197,94,.25);border-radius:var(--rl);padding:1.25rem 1.5rem;margin-top:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.spi{display:flex;flex-direction:column;gap:4px}
+.spi strong{font-size:14px;font-weight:600}
+.spi span{font-size:12px;color:var(--tm)}
+.sa{display:flex;gap:10px;flex-wrap:wrap}
+.sts{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:500}
+.sts.ok{background:var(--grd);color:var(--gr)}
+.sts.er{background:var(--rdd);color:var(--rd)}
+.sts.ld{background:var(--acd);color:var(--ac)}
+.nb{background:var(--sf2);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:var(--r);padding:12px 16px;font-size:12px;color:var(--tm);line-height:1.7;margin-top:1rem}
+.he{text-align:center;padding:4rem 2rem;color:var(--td);font-size:14px}
+.hc{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem}
+.ms{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+@media(max-width:640px){.ms{grid-template-columns:1fr 1fr}}
+.htw{overflow-x:auto;border-radius:var(--rl);border:1px solid var(--bd)}
+table.ht{width:100%;border-collapse:collapse;min-width:800px}
+table.ht th{padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--td);background:var(--sf2);border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+table.ht td{padding:9px 14px;font-size:13px;border-bottom:1px solid var(--bd);color:var(--tm);white-space:nowrap}
+table.ht tr:last-child td{border-bottom:none}
+table.ht td.nm{font-family:var(--mn);text-align:right;color:var(--tx)}
+table.ht td.ps{font-family:var(--mn);text-align:right;color:var(--gr);font-weight:500}
+table.ht td.ng{font-family:var(--mn);text-align:right;color:var(--rd);font-weight:500}
+table.ht tbody tr:hover td{background:var(--sf2)}
+.ss3{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.5rem}
+.ss3 h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.ss3 p{font-size:12px;color:var(--tm);margin-bottom:1rem;line-height:1.6}
+.ss3 code{background:var(--sf2);border:1px solid var(--bd);border-radius:4px;padding:2px 6px;font-family:var(--mn);font-size:12px;color:var(--ac)}
+.scb{background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);padding:1rem;font-family:var(--mn);font-size:11px;color:var(--tm);line-height:1.7;overflow-x:auto;white-space:pre;margin:.75rem 0}
+.step{display:flex;gap:12px;margin-bottom:1rem}
+.sn{width:24px;height:24px;border-radius:50%;background:var(--acd);border:1px solid var(--ac);color:var(--ac);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.stx{font-size:13px;color:var(--tm);line-height:1.6}
+.stx strong{color:var(--tx)}
+.uiw{display:flex;gap:10px;align-items:center;margin-top:.75rem;flex-wrap:wrap}
+.uiw input{flex:1;min-width:200px}
+.ts{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:500;display:none}
+.ts.ok{display:inline-block;background:var(--grd);color:var(--gr)}
+.ts.er{display:inline-block;background:var(--rdd);color:var(--rd)}
+footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="header-inner">
+  <div class="hi">
     <div class="brand">
-      <div class="brand-icon">📈</div>
-      <div class="brand-text">
-        <h1>PSX Trade Calculator</h1>
-        <p>Brokerage · Government levies · CGT · Net profit</p>
-      </div>
+      <div class="bi">📈</div>
+      <div class="bt"><h1>PSX Trade Calculator</h1><p>Brokerage · Levies · CGT · Google Sheets sync</p></div>
     </div>
-    <div class="header-badges">
-      <span class="badge green">JS Global</span>
+    <div class="badges">
+      <span class="badge gr">JS Global</span>
       <span class="badge">FY 2025–26</span>
-      <span class="badge">Filer &amp; Non-Filer</span>
+      <span class="badge ac" id="sheetBadge">Sheet: not connected</span>
     </div>
   </div>
 </header>
 
 <main>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('calc',this)">📊 Calculator</button>
+  <button class="tab" onclick="switchTab('history',this)">📋 Trade History</button>
+  <button class="tab" onclick="switchTab('settings',this)">⚙️ Sheet Setup</button>
+</div>
 
-  <!-- INPUTS -->
-  <div class="section">
-    <div class="section-label">Trade details</div>
-    <div class="form-card">
-      <div class="grid-3" style="margin-bottom: 1.25rem;">
-        <div class="field">
-          <label>Number of shares</label>
-          <input type="number" id="qty" value="1000" min="1" placeholder="e.g. 500" />
-        </div>
-        <div class="field">
-          <label>Buy price (PKR)</label>
-          <div class="input-wrap">
-            <span class="input-prefix">₨</span>
-            <input type="number" id="buy" value="50" min="0.01" step="0.01" class="has-prefix" placeholder="0.00" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Sell price (PKR)</label>
-          <div class="input-wrap">
-            <span class="input-prefix">₨</span>
-            <input type="number" id="sell" value="60" min="0.01" step="0.01" class="has-prefix" placeholder="0.00" />
-          </div>
-        </div>
+<!-- CALCULATOR -->
+<div class="tp active" id="tab-calc">
+  <div class="sec">
+    <div class="sl">Trade details</div>
+    <div class="fc">
+      <div class="g4" style="margin-bottom:1.25rem">
+        <div class="fld"><label>Stock symbol</label><input type="text" id="symbol" placeholder="e.g. ENGRO" style="text-transform:uppercase"/></div>
+        <div class="fld"><label>Number of shares</label><input type="number" id="qty" value="1000" min="1"/></div>
+        <div class="fld"><label>Buy price (PKR)</label><div class="iw"><span class="ip">₨</span><input type="number" id="buy" value="50" min="0.01" step="0.01" class="hp"/></div></div>
+        <div class="fld"><label>Sell price (PKR)</label><div class="iw"><span class="ip">₨</span><input type="number" id="sell" value="60" min="0.01" step="0.01" class="hp"/></div></div>
       </div>
-
-      <div class="section-label" style="margin-top: 0.5rem;">Holding period</div>
-      <div class="toggle-group" id="holding" style="margin-bottom: 1.25rem;">
-        <button class="toggle-btn active" data-val="0">Under 1 year</button>
-        <button class="toggle-btn" data-val="1">1 – 2 years</button>
-        <button class="toggle-btn" data-val="2">2 – 3 years</button>
-        <button class="toggle-btn" data-val="3">Over 3 years</button>
+      <div class="sl" style="margin-top:.25rem">Holding period</div>
+      <div class="tg" id="holding" style="margin-bottom:1.25rem">
+        <button class="tb active" data-val="0">Under 1 year</button>
+        <button class="tb" data-val="1">1 – 2 years</button>
+        <button class="tb" data-val="2">2 – 3 years</button>
+        <button class="tb" data-val="3">Over 3 years</button>
       </div>
-
-      <div class="section-label" style="margin-top: 0;">Brokerage rate</div>
-      <div class="rate-info">
-        <span class="dot"></span>
-        <span id="rateInfoText">Auto-calculated based on share price: PKR 0.03/share if price ≤ PKR 20, or 0.15% of value if price > PKR 20 (JS Global standard)</span>
+      <div class="sl" style="margin-top:0">Brokerage rate</div>
+      <div class="ri"><span class="dot"></span><span>Auto: ₨0.03/share for prices ≤ ₨20 · 0.15% of value for prices above ₨20 (JS Global standard)</span></div>
+      <div class="g2">
+        <div class="fld"><label>Custom % for prices above ₨20</label><input type="number" id="bPct" value="0.15" min="0.05" max="2.5" step="0.005"/></div>
+        <div class="fld"><label>Flat rate for prices ≤ ₨20 (per share)</label><input type="number" id="flatR" value="0.03" min="0.01" max="0.50" step="0.005"/></div>
       </div>
-      <div class="grid-2">
-        <div class="field">
-          <label>Custom brokerage % for prices above ₨20</label>
-          <input type="number" id="brokerPct" value="0.15" min="0.05" max="2.5" step="0.005" />
-        </div>
-        <div class="field">
-          <label>Flat rate for prices ₨20 and below (per share)</label>
-          <input type="number" id="flatRate" value="0.03" min="0.01" max="0.50" step="0.005" />
-        </div>
-      </div>
-
-      <button class="calc-btn" onclick="calculate()" style="margin-top: 1.25rem;">Calculate all charges →</button>
+      <button class="btn btn-p" onclick="calc()">Calculate all charges →</button>
     </div>
   </div>
 
-  <!-- RESULTS -->
   <div id="results">
-
-    <div class="section">
-      <div class="section-label">Net result</div>
-      <div class="summary-strip" id="summaryStrip"></div>
+    <div class="sec"><div class="sl">Net result</div><div class="ss" id="sumStrip"></div></div>
+    <div class="sec"><div class="sl">Filer vs non-filer</div><div class="dp" id="dualPanel"></div></div>
+    <div class="sec"><div class="sl">Buy side breakdown</div><div id="buyBkd"></div></div>
+    <div class="sec"><div class="sl">Sell side breakdown</div><div id="sellBkd"></div></div>
+    <div class="sp">
+      <div class="spi"><strong>Save this trade to Google Sheets</strong><span id="saveDesc">All calculated values will be appended as a new row</span></div>
+      <div class="sa">
+        <button class="btn btn-s" id="saveBtn" onclick="saveToSheet()">💾 Save to Sheet</button>
+        <button class="btn btn-e" onclick="exportCSV()">⬇ Download CSV</button>
+      </div>
+      <span class="sts" id="saveSts"></span>
     </div>
-
-    <div class="section">
-      <div class="section-label">Filer vs non-filer comparison</div>
-      <div class="dual-panel" id="dualPanel"></div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Buy side breakdown</div>
-      <div id="buyBreakdown"></div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Sell side breakdown</div>
-      <div id="sellBreakdown"></div>
-    </div>
-
-    <div class="note-box" id="noteBox"></div>
-
+    <div class="nb" id="noteBox"></div>
   </div>
+</div>
 
+<!-- HISTORY -->
+<div class="tp" id="tab-history">
+  <div class="sec">
+    <div class="sl">Monthly summary</div>
+    <div class="ms">
+      <div class="sc"><div class="sl2">Total trades</div><div class="sv" id="mT">0</div></div>
+      <div class="sc"><div class="sl2">Total buy cost</div><div class="sv" id="mB">₨0</div></div>
+      <div class="sc"><div class="sl2">Total CGT paid (filer)</div><div class="sv" id="mC">₨0</div></div>
+      <div class="sc pf"><div class="sl2">Total net profit (filer)</div><div class="sv" id="mP">₨0</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="hc">
+      <div class="sl" style="flex:1;margin-bottom:0">Trade log</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-e" onclick="exportAll()">⬇ Export all CSV</button>
+        <button class="btn btn-d" onclick="clearHist()">🗑 Clear history</button>
+      </div>
+    </div>
+    <div id="histContent"><div class="he">No trades recorded yet.<br>Calculate a trade and click "Save to Sheet" to log it.</div></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="tp" id="tab-settings">
+  <div class="ss3">
+    <h3>Connect Google Sheets — one-time setup (5 minutes)</h3>
+    <p>Your app sends trade data to a Google Apps Script URL → the Script appends a row to your Sheet automatically. Completely free, no login required in the app.</p>
+    <div class="step"><div class="sn">1</div><div class="stx"><strong>Open Google Sheets</strong>, create a new spreadsheet. Name it <strong>PSX Trade Log</strong>.</div></div>
+    <div class="step"><div class="sn">2</div><div class="stx"><strong>Go to Extensions → Apps Script.</strong> Delete all default code and paste the script below exactly.</div></div>
+    <div class="scb" id="scriptCode">function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data  = JSON.parse(e.postData.contents);
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Date","Time","Symbol","Qty","Buy Price","Sell Price",
+        "Holding Period","Gross Buy","Gross Sell",
+        "Brokerage (Buy)","Sales Tax (Buy)","Levies (Buy)","Total Buy Cost",
+        "Brokerage (Sell)","Sales Tax (Sell)","Levies (Sell)",
+        "CGT (Filer)","CGT (Non-Filer)",
+        "Total Sell Ded (Filer)","Total Sell Ded (Non-Filer)",
+        "Net Proceeds (Filer)","Net Proceeds (Non-Filer)",
+        "Net Profit (Filer)","Net Profit (Non-Filer)",
+        "Return % (Filer)","Return % (Non-Filer)"]);
+    }
+    sheet.appendRow([data.date,data.time,data.symbol,data.qty,
+      data.buyPrice,data.sellPrice,data.holdingPeriod,
+      data.grossBuy,data.grossSell,
+      data.brokerageBuy,data.salesTaxBuy,data.leviesBuy,data.totalBuyCost,
+      data.brokerageSell,data.salesTaxSell,data.leviesSell,
+      data.cgtFiler,data.cgtNonFiler,
+      data.totalSellDedFiler,data.totalSellDedNonFiler,
+      data.netProceedsFiler,data.netProceedsNonFiler,
+      data.netProfitFiler,data.netProfitNonFiler,
+      data.returnFiler,data.returnNonFiler]);
+    return ContentService.createTextOutput(JSON.stringify({status:"ok"})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:"error",message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({status:"ok",message:"PSX Calculator connected"})).setMimeType(ContentService.MimeType.JSON);
+}</div>
+    <button class="btn btn-st" onclick="copyScript()" style="margin-bottom:1rem">📋 Copy script</button>
+    <div class="step"><div class="sn">3</div><div class="stx"><strong>Click Deploy → New deployment.</strong> Type: <strong>Web app</strong>. Execute as: <strong>Me</strong>. Who has access: <strong>Anyone</strong>. Click Deploy and authorize.</div></div>
+    <div class="step"><div class="sn">4</div><div class="stx"><strong>Copy the Web App URL</strong> (looks like <code>https://script.google.com/macros/s/ABC.../exec</code>) and paste below.</div></div>
+    <div class="uiw">
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"/>
+      <button class="btn btn-st" onclick="testConn()">Test</button>
+      <button class="btn btn-s" onclick="saveUrl()">Save URL</button>
+      <span class="ts" id="testSts"></span>
+    </div>
+  </div>
+  <div class="ss3">
+    <h3>What gets saved (26 columns per trade)</h3>
+    <div class="scb" style="white-space:pre-wrap">Date · Time · Symbol · Qty · Buy Price · Sell Price · Holding Period
+Gross Buy · Gross Sell
+Brokerage (Buy) · Sales Tax (Buy) · Levies (Buy) · Total Buy Cost
+Brokerage (Sell) · Sales Tax (Sell) · Levies (Sell)
+CGT Filer · CGT Non-Filer
+Total Sell Ded Filer · Total Sell Ded Non-Filer
+Net Proceeds Filer · Net Proceeds Non-Filer
+Net Profit Filer · Net Profit Non-Filer
+Return % Filer · Return % Non-Filer</div>
+    <p>Headers are added automatically on first save. Add a SUM row at the bottom of your Sheet for instant monthly totals.</p>
+  </div>
+</div>
 </main>
 
-<footer>
-  <div style="max-width:900px; margin:0 auto; padding:0 1.5rem;">
-    PSX Trade Calculator · Rates: FY 2025–26 · CGT deducted by NCCPL at settlement · Always verify with your trade confirmation slip
-  </div>
-</footer>
+<footer>PSX Trade Calculator · FY 2025–26 · CGT deducted by NCCPL at settlement · Always verify against your broker's trade confirmation slip</footer>
 
 <script>
-  // ── HOLDING PERIOD TOGGLE ──────────────────────────
-  let holding = 0;
-  document.querySelectorAll('#holding .toggle-btn').forEach(b => {
-    b.onclick = () => {
-      document.querySelectorAll('#holding .toggle-btn').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      holding = +b.dataset.val;
-    };
-  });
+var hldg=0,last=null,log=JSON.parse(localStorage.getItem('psx_trades')||'[]');
 
-  // ── FORMATTING ─────────────────────────────────────
-  function fmt(n) {
-    return '₨\u202f' + Math.abs(n).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function switchTab(name,el){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='history')renderHist();
+}
+
+document.querySelectorAll('#holding .tb').forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll('#holding .tb').forEach(x=>x.classList.remove('active'));b.classList.add('active');hldg=+b.dataset.val;};
+});
+
+function r2(n){return Math.round(n*100)/100;}
+function fmt(n){return '₨\u202f'+Math.abs(n).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtS(n){return(n>=0?'+':'−')+fmt(n);}
+function fmtK(n){return '₨\u202f'+(Math.abs(n)/1000).toFixed(1)+'k';}
+
+function broker(price,qty,pct,flat){return price<=20?qty*flat:price*qty*(pct/100);}
+function stax(b){return b*0.13;}
+function levies(v){return v*(0.000001+0.00005+0.0001+0.00015);}
+var CGF=[.15,.125,.10,.075],CGNF=[.30,.25,.20,.15];
+var CGLf=['15%','12.5%','10%','7.5%'],CGLn=['30%','25%','20%','15%'];
+function cgt(profit,p,filer){return profit<=0?0:profit*(filer?CGF[p]:CGNF[p]);}
+
+function calc(){
+  var qty=+document.getElementById('qty').value||0;
+  var bp=+document.getElementById('buy').value||0;
+  var sp=+document.getElementById('sell').value||0;
+  var pct=+document.getElementById('bPct').value||0.15;
+  var flat=+document.getElementById('flatR').value||0.03;
+  var sym=(document.getElementById('symbol').value||'').toUpperCase().trim();
+  if(qty<=0||bp<=0||sp<=0){alert('Enter valid qty, buy price and sell price.');return;}
+
+  var bgr=r2(qty*bp),bbr=r2(broker(bp,qty,pct,flat)),bst=r2(stax(bbr)),blv=r2(levies(bgr));
+  var bdd=r2(bbr+bst+blv),btot=r2(bgr+bdd);
+  var sgr=r2(qty*sp),sbr=r2(broker(sp,qty,pct,flat)),sst=r2(stax(sbr)),slv=r2(levies(sgr));
+  var sntd=r2(sbr+sst+slv);
+  var tp=r2(sgr-btot);
+  var cgf=r2(cgt(tp,hldg,true)),cgnf=r2(cgt(tp,hldg,false));
+  var stf=r2(sntd+cgf),stnf=r2(sntd+cgnf);
+  var nf=r2(sgr-stf),nnf=r2(sgr-stnf);
+  var prf=r2(nf-btot),prnf=r2(nnf-btot);
+  var retf=btot>0?r2(prf/btot*100):0,retnf=btot>0?r2(prnf/btot*100):0;
+  var bm=bp<=20?'₨'+flat+'/share (price ≤ ₨20)':pct+'% of value';
+  var sm=sp<=20?'₨'+flat+'/share (price ≤ ₨20)':pct+'% of value';
+  var hl=['under 1 year','1–2 years','2–3 years','over 3 years'][hldg];
+
+  last={sym,qty,bp,sp,pct,flat,hl,bgr,sgr,bbr,bst,blv,btot,sbr,sst,slv,cgf,cgnf,stf,stnf,nf,nnf,prf,prnf,retf,retnf,tp};
+
+  var pc=prf>=0?'pf':'ls';
+  document.getElementById('sumStrip').innerHTML=
+    '<div class="sc"><div class="sl2">Total buy cost</div><div class="sv">'+fmt(btot)+'</div><div class="ss2">'+qty.toLocaleString()+' shares @ ₨'+bp+'</div></div>'+
+    '<div class="sc"><div class="sl2">Net proceeds (filer)</div><div class="sv">'+fmt(nf)+'</div><div class="ss2">After all charges + CGT</div></div>'+
+    '<div class="sc '+pc+'"><div class="sl2">Net profit / loss (filer)</div><div class="sv">'+fmtS(prf)+'</div><div class="ss2">Return: '+(retf>=0?'+':'')+retf.toFixed(2)+'%</div></div>';
+
+  document.getElementById('dualPanel').innerHTML=
+    '<div class="pnl"><div class="ph"><span class="pt">Tax filer (ATL)</span><span class="fb">Filer</span></div><table class="bt">'+
+    '<tr><td class="tl">CGT rate ('+hl+')</td><td class="tv">'+CGLf[hldg]+'</td></tr>'+
+    '<tr><td class="tl">CGT amount</td><td class="tv">'+fmt(cgf)+'</td></tr>'+
+    '<tr><td class="tl">Total sell deductions</td><td class="tv">'+fmt(stf)+'</td></tr>'+
+    '<tr><td class="tl">Net sell proceeds</td><td class="tv">'+fmt(nf)+'</td></tr>'+
+    '<tr><td class="tl" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">Net profit / loss</td><td class="tv" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prf)+'</td></tr>'+
+    '<tr><td class="tl">Return %</td><td class="tv">'+retf.toFixed(2)+'%</td></tr></table></div>'+
+    '<div class="pnl"><div class="ph"><span class="pt">Non-filer</span><span class="nfb">Non-filer</span></div><table class="bt">'+
+    '<tr><td class="tl">CGT rate ('+hl+')</td><td class="tv">'+CGLn[hldg]+'</td></tr>'+
+    '<tr><td class="tl">CGT amount</td><td class="tv">'+fmt(cgnf)+'</td></tr>'+
+    '<tr><td class="tl">Total sell deductions</td><td class="tv">'+fmt(stnf)+'</td></tr>'+
+    '<tr><td class="tl">Net sell proceeds</td><td class="tv">'+fmt(nnf)+'</td></tr>'+
+    '<tr><td class="tl" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">Net profit / loss</td><td class="tv" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prnf)+'</td></tr>'+
+    '<tr><td class="tl">Return %</td><td class="tv">'+retnf.toFixed(2)+'%</td></tr></table></div>';
+
+  function mkBkd(side,gv,br,st,lv,totf,totnf,mode,isSell){
+    return '<div class="bkd"><div class="bh"><span class="btt">'+side+'</span><span class="btv">'+fmt(gv)+'</span></div>'+
+      '<table class="bt">'+
+      '<tr><td class="tl">Brokerage commission<div class="tn">'+mode+'</div></td><td class="tv">'+fmt(br)+'</td></tr>'+
+      '<tr><td class="tl">Sales tax on brokerage<div class="tn">13% of brokerage</div></td><td class="tv">'+fmt(st)+'</td></tr>'+
+      '<tr><td class="tl">Regulatory levies<div class="tn">SECP + PSX + NCCPL + CDC</div></td><td class="tv">'+fmt(lv)+'</td></tr>'+
+      (isSell&&tp>0?
+        '<tr class="rcf"><td class="tl">CGT on profit <span class="pill pg">Filer '+CGLf[hldg]+'</span><div class="tn">Taxable profit: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgf)+'</td></tr>'+
+        '<tr class="rcn"><td class="tl">CGT on profit <span class="pill pa">Non-filer '+CGLn[hldg]+'</span><div class="tn">Taxable profit: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgnf)+'</td></tr>'
+      :(isSell?'<tr><td class="tl" style="color:var(--td)">CGT — no profit, no tax</td><td class="tv" style="color:var(--td)">—</td></tr>':''))+
+      '<tr class="rst"><td class="tl">Total deductions'+(isSell?' <span class="pill pg">filer</span>':'')+'</td><td class="tv">'+fmt(totf)+'</td></tr>'+
+      (isSell?'<tr class="rst"><td class="tl">Total deductions <span class="pill pa">non-filer</span></td><td class="tv">'+fmt(totnf)+'</td></tr>':'')+
+      '</table></div>';
   }
-  function fmtSigned(n) {
-    return (n >= 0 ? '+' : '−') + fmt(n);
+
+  document.getElementById('buyBkd').innerHTML=mkBkd('Buy side',bgr,bbr,bst,blv,bdd,bdd,bm,false);
+  document.getElementById('sellBkd').innerHTML=mkBkd('Sell side',sgr,sbr,sst,slv,stf,stnf,sm,true);
+  document.getElementById('saveDesc').textContent=sym?sym+' · '+qty.toLocaleString()+' shares · Profit: '+fmtS(prf):qty.toLocaleString()+' shares · Profit: '+fmtS(prf);
+  document.getElementById('noteBox').innerHTML='<strong style="color:var(--ac)">Important notes</strong><br>CGT is computed on taxable profit (sell gross minus full buy cost including buy-side charges) and deducted by NCCPL at settlement. Brokerage: ₨'+flat+'/share for prices ≤ ₨20; '+pct+'% of value above ₨20. Regulatory levies are approximate — verify against your broker\'s trade confirmation slip.';
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function saveToSheet(){
+  var url=localStorage.getItem('psx_script_url');
+  if(!url){alert('No Sheet URL saved. Go to ⚙️ Sheet Setup tab first.');return;}
+  if(!last){alert('Calculate a trade first.');return;}
+  var btn=document.getElementById('saveBtn'),sts=document.getElementById('saveSts');
+  btn.disabled=true;sts.textContent='Saving…';sts.className='sts ld';
+  var now=new Date();
+  var payload={
+    date:now.toLocaleDateString('en-PK'),time:now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}),
+    symbol:last.sym||'—',qty:last.qty,buyPrice:last.bp,sellPrice:last.sp,holdingPeriod:last.hl,
+    grossBuy:last.bgr,grossSell:last.sgr,brokerageBuy:last.bbr,salesTaxBuy:last.bst,leviesBuy:last.blv,totalBuyCost:last.btot,
+    brokerageSell:last.sbr,salesTaxSell:last.sst,leviesSell:last.slv,
+    cgtFiler:last.cgf,cgtNonFiler:last.cgnf,totalSellDedFiler:last.stf,totalSellDedNonFiler:last.stnf,
+    netProceedsFiler:last.nf,netProceedsNonFiler:last.nnf,netProfitFiler:last.prf,netProfitNonFiler:last.prnf,
+    returnFiler:last.retf,returnNonFiler:last.retnf
+  };
+  log.push({...payload,id:Date.now()});
+  localStorage.setItem('psx_trades',JSON.stringify(log));
+  try{
+    var res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    var json=await res.json();
+    if(json.status==='ok'){sts.textContent='✓ Saved to Sheet';sts.className='sts ok';}
+    else throw new Error(json.message||'Unknown error');
+  }catch(err){
+    sts.textContent='✓ Saved locally (Sheet: '+err.message.substring(0,35)+')';sts.className='sts er';
   }
-  function pct(n) { return n.toFixed(4) + '%'; }
+  btn.disabled=false;
+  setTimeout(()=>{sts.textContent='';sts.className='sts';},6000);
+}
 
-  // ── FEE CALCULATIONS ───────────────────────────────
-  function getBroker(price, qty, pctRate, flatPer) {
-    return price <= 20 ? qty * flatPer : price * qty * (pctRate / 100);
+function exportCSV(){
+  if(!last){alert('Calculate a trade first.');return;}
+  var now=new Date(),r=last;
+  var h=['Date','Time','Symbol','Qty','Buy Price','Sell Price','Holding Period','Gross Buy','Gross Sell','Brokerage Buy','Sales Tax Buy','Levies Buy','Total Buy Cost','Brokerage Sell','Sales Tax Sell','Levies Sell','CGT Filer','CGT Non-Filer','Total Sell Ded Filer','Total Sell Ded Non-Filer','Net Proceeds Filer','Net Proceeds Non-Filer','Net Profit Filer','Net Profit Non-Filer','Return% Filer','Return% Non-Filer'];
+  var d=[now.toLocaleDateString('en-PK'),now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}),r.sym||'—',r.qty,r.bp,r.sp,r.hl,r.bgr,r.sgr,r.bbr,r.bst,r.blv,r.btot,r.sbr,r.sst,r.slv,r.cgf,r.cgnf,r.stf,r.stnf,r.nf,r.nnf,r.prf,r.prnf,r.retf,r.retnf];
+  dl(h.join(',')+'\n'+d.join(','),'psx_trade_'+(r.sym||'trade')+'_'+now.toISOString().slice(0,10)+'.csv');
+}
+
+function exportAll(){
+  if(!log.length){alert('No trades in local history.');return;}
+  var h=Object.keys(log[0]).filter(k=>k!=='id');
+  var rows=log.map(t=>h.map(k=>t[k]??'').join(','));
+  dl(h.join(',')+'\n'+rows.join('\n'),'psx_all_trades_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function dl(content,name){
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(content);
+  a.download=name;a.click();
+}
+
+function renderHist(){
+  if(!log.length){
+    document.getElementById('histContent').innerHTML='<div class="he">No trades recorded yet.<br>Calculate a trade and click "Save to Sheet" to log it.</div>';
+    ['mT','mB','mC','mP'].forEach(id=>document.getElementById(id).textContent=id==='mT'?'0':'₨0');
+    return;
   }
-  function getSalesTax(broker) { return broker * 0.13; }      // 13% Sindh/Punjab sales tax on brokerage
-  function getSecp(val)  { return val * 0.000001; }           // 0.0001%
-  function getPsx(val)   { return val * 0.00005;  }           // 0.005%
-  function getNccpl(val) { return val * 0.0001;   }           // 0.010%
-  function getCdc(val)   { return val * 0.00015;  }           // 0.015%
+  var tB=log.reduce((s,t)=>s+(+t.totalBuyCost||0),0);
+  var tC=log.reduce((s,t)=>s+(+t.cgtFiler||0),0);
+  var tP=log.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
+  document.getElementById('mT').textContent=log.length;
+  document.getElementById('mB').textContent=fmtK(tB);
+  document.getElementById('mC').textContent=fmtK(tC);
+  var mP=document.getElementById('mP');
+  mP.textContent=fmtK(tP);mP.style.color=tP>=0?'var(--gr)':'var(--rd)';
+  var rows=[...log].reverse().map(t=>{
+    var p=+t.netProfitFiler||0,pc=p>0?'ps':p<0?'ng':'nm';
+    return '<tr><td>'+t.date+'</td><td style="color:var(--ac);font-weight:500">'+(t.symbol||'—')+'</td>'+
+      '<td class="nm">'+((+t.qty||0).toLocaleString())+'</td>'+
+      '<td class="nm">₨'+(+t.buyPrice||0).toFixed(2)+'</td>'+
+      '<td class="nm">₨'+(+t.sellPrice||0).toFixed(2)+'</td>'+
+      '<td>'+(t.holdingPeriod||'—')+'</td>'+
+      '<td class="nm">'+fmt(+t.totalBuyCost||0)+'</td>'+
+      '<td class="nm">'+fmt(+t.cgtFiler||0)+'</td>'+
+      '<td class="'+pc+'">'+fmtS(p)+'</td>'+
+      '<td class="'+pc+'">'+(+t.returnFiler||0).toFixed(2)+'%</td></tr>';
+  }).join('');
+  document.getElementById('histContent').innerHTML=
+    '<div class="htw"><table class="ht"><thead><tr>'+
+    '<th>Date</th><th>Symbol</th><th>Qty</th><th>Buy</th><th>Sell</th><th>Holding</th><th>Buy Cost</th><th>CGT (Filer)</th><th>Net Profit</th><th>Return</th>'+
+    '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
 
-  // CGT rates (on profit, SELL side only)
-  const CGT_FILER    = [0.15, 0.125, 0.10, 0.075];
-  const CGT_NONFILER = [0.30, 0.25,  0.20, 0.15 ];
-  const CGT_RATE_LABELS_F  = ['15%','12.5%','10%','7.5%'];
-  const CGT_RATE_LABELS_NF = ['30%','25%','20%','15%'];
+function clearHist(){
+  if(!confirm('Clear all local trade history? Your Google Sheet data is NOT affected.'))return;
+  log=[];localStorage.removeItem('psx_trades');renderHist();
+}
 
-  function getCGT(profit, period, filer) {
-    if (profit <= 0) return 0;
-    return profit * (filer ? CGT_FILER[period] : CGT_NONFILER[period]);
-  }
+function saveUrl(){
+  var url=document.getElementById('scriptUrl').value.trim();
+  if(!url.startsWith('https://script.google.com')){alert('That does not look like a valid Apps Script URL.');return;}
+  localStorage.setItem('psx_script_url',url);
+  updateBadge();alert('URL saved! You can now save trades to your Google Sheet.');
+}
 
-  // ── MAIN CALCULATION ───────────────────────────────
-  function calculate() {
-    const qty      = +document.getElementById('qty').value       || 0;
-    const buyP     = +document.getElementById('buy').value       || 0;
-    const sellP    = +document.getElementById('sell').value      || 0;
-    const bPct     = +document.getElementById('brokerPct').value || 0.15;
-    const flatPer  = +document.getElementById('flatRate').value  || 0.03;
+async function testConn(){
+  var url=document.getElementById('scriptUrl').value.trim();
+  if(!url){alert('Paste your Apps Script URL first.');return;}
+  var sts=document.getElementById('testSts');
+  sts.textContent='Testing…';sts.className='ts ok';
+  try{
+    var res=await fetch(url+'?test=1');
+    var json=await res.json();
+    if(json.status==='ok'){sts.textContent='✓ Connected';sts.className='ts ok';}
+    else throw new Error('Bad response');
+  }catch(e){sts.textContent='✗ Failed — check URL & deployment';sts.className='ts er';}
+}
 
-    if (qty <= 0 || buyP <= 0 || sellP <= 0) {
-      alert('Please enter valid values for all three trade fields.');
-      return;
-    }
+function copyScript(){
+  var t=document.getElementById('scriptCode').textContent;
+  navigator.clipboard.writeText(t).then(()=>alert('Script copied!')).catch(()=>alert('Copy failed — select and copy manually.'));
+}
 
-    // ── BUY SIDE ──
-    const buyGross  = qty * buyP;
-    const buyBrok   = getBroker(buyP, qty, bPct, flatPer);
-    const buyST     = getSalesTax(buyBrok);
-    const buySecp   = getSecp(buyGross);
-    const buyPsx    = getPsx(buyGross);
-    const buyNccpl  = getNccpl(buyGross);
-    const buyCdc    = getCdc(buyGross);
-    const buyLevy   = buySecp + buyPsx + buyNccpl + buyCdc;
-    const buyDed    = buyBrok + buyST + buyLevy;
-    const buyTotal  = buyGross + buyDed;  // what you actually paid
+function updateBadge(){
+  var url=localStorage.getItem('psx_script_url'),b=document.getElementById('sheetBadge');
+  if(url){b.textContent='Sheet: connected';b.style.cssText='border-color:var(--gr);color:var(--gr);background:var(--grd)';}
+  else{b.textContent='Sheet: not connected';b.style.cssText='';}
+}
 
-    // ── SELL SIDE ──
-    const sellGross = qty * sellP;
-    const sellBrok  = getBroker(sellP, qty, bPct, flatPer);
-    const sellST    = getSalesTax(sellBrok);
-    const sellSecp  = getSecp(sellGross);
-    const sellPsx   = getPsx(sellGross);
-    const sellNccpl = getNccpl(sellGross);
-    const sellCdc   = getCdc(sellGross);
-    const sellLevy  = sellSecp + sellPsx + sellNccpl + sellCdc;
-    const sellNonTaxDed = sellBrok + sellST + sellLevy;
-
-    // Taxable profit = sell gross − buy total cost (including buy charges)
-    const taxableProfit = sellGross - buyTotal;
-
-    const cgtF  = getCGT(taxableProfit, holding, true);
-    const cgtNF = getCGT(taxableProfit, holding, false);
-
-    const sellTotalDedF  = sellNonTaxDed + cgtF;
-    const sellTotalDedNF = sellNonTaxDed + cgtNF;
-
-    const netProceedsF  = sellGross - sellTotalDedF;
-    const netProceedsNF = sellGross - sellTotalDedNF;
-
-    const netProfitF  = netProceedsF  - buyTotal;
-    const netProfitNF = netProceedsNF - buyTotal;
-
-    const retF  = buyTotal > 0 ? (netProfitF  / buyTotal * 100) : 0;
-    const retNF = buyTotal > 0 ? (netProfitNF / buyTotal * 100) : 0;
-
-    const buyMode  = buyP  <= 20 ? `₨${flatPer}/share (price ≤ ₨20)` : `${bPct}% of value`;
-    const sellMode = sellP <= 20 ? `₨${flatPer}/share (price ≤ ₨20)` : `${bPct}% of value`;
-
-    // ── RENDER SUMMARY ──
-    const profClass = netProfitF >= 0 ? 'profit' : 'loss';
-    document.getElementById('summaryStrip').innerHTML = `
-      <div class="stat-card">
-        <div class="stat-label">Total buy cost</div>
-        <div class="stat-val">${fmt(buyTotal)}</div>
-        <div class="stat-sub">${qty.toLocaleString()} shares @ ₨${buyP}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Net proceeds (filer)</div>
-        <div class="stat-val">${fmt(netProceedsF)}</div>
-        <div class="stat-sub">After all charges + CGT</div>
-      </div>
-      <div class="stat-card ${profClass}">
-        <div class="stat-label">Net profit / loss (filer)</div>
-        <div class="stat-val">${fmtSigned(netProfitF)}</div>
-        <div class="stat-sub">Return: ${retF >= 0 ? '+' : ''}${retF.toFixed(2)}%</div>
-      </div>
-    `;
-
-    // ── RENDER DUAL PANEL ──
-    const holdingLabel = ['under 1 year','1–2 years','2–3 years','over 3 years'][holding];
-    document.getElementById('dualPanel').innerHTML = `
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Tax filer (ATL)</span>
-          <span class="filer-badge">Filer</span>
-        </div>
-        <table class="breakdown-table">
-          <tr><td class="td-label">CGT rate (${holdingLabel})</td><td class="td-val">${CGT_RATE_LABELS_F[holding]}</td></tr>
-          <tr><td class="td-label">CGT amount</td><td class="td-val">${fmt(cgtF)}</td></tr>
-          <tr><td class="td-label">Total sell deductions</td><td class="td-val">${fmt(sellTotalDedF)}</td></tr>
-          <tr><td class="td-label">Net sell proceeds</td><td class="td-val">${fmt(netProceedsF)}</td></tr>
-          <tr><td class="td-label" style="color:${netProfitF>=0?'var(--green)':'var(--red)'}">Net profit / loss</td><td class="td-val" style="color:${netProfitF>=0?'var(--green)':'var(--red)'}">${fmtSigned(netProfitF)}</td></tr>
-          <tr><td class="td-label">Return %</td><td class="td-val">${retF.toFixed(2)}%</td></tr>
-        </table>
-      </div>
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Non-filer</span>
-          <span class="nonfiler-badge">Non-filer</span>
-        </div>
-        <table class="breakdown-table">
-          <tr><td class="td-label">CGT rate (${holdingLabel})</td><td class="td-val">${CGT_RATE_LABELS_NF[holding]}</td></tr>
-          <tr><td class="td-label">CGT amount</td><td class="td-val">${fmt(cgtNF)}</td></tr>
-          <tr><td class="td-label">Total sell deductions</td><td class="td-val">${fmt(sellTotalDedNF)}</td></tr>
-          <tr><td class="td-label">Net sell proceeds</td><td class="td-val">${fmt(netProceedsNF)}</td></tr>
-          <tr><td class="td-label" style="color:${netProfitNF>=0?'var(--green)':'var(--red)'}">Net profit / loss</td><td class="td-val" style="color:${netProfitNF>=0?'var(--green)':'var(--red)'}">${fmtSigned(netProfitNF)}</td></tr>
-          <tr><td class="td-label">Return %</td><td class="td-val">${retNF.toFixed(2)}%</td></tr>
-        </table>
-      </div>
-    `;
-
-    // ── BREAKDOWN TABLE BUILDER ──
-    function makeBreakdown(side, grossVal, brok, st, secp, psx, nccpl, cdc, totalDedF, totalDedNF, modeStr, isSell) {
-      const govLevy = secp + psx + nccpl + cdc;
-      return `
-      <div class="breakdown">
-        <div class="breakdown-header">
-          <span class="breakdown-title">${side} — gross value</span>
-          <span class="breakdown-total">${fmt(grossVal)}</span>
-        </div>
-        <table class="breakdown-table">
-          <tr>
-            <td class="td-label">Brokerage commission<div class="td-note">${modeStr}</div></td>
-            <td class="td-val">${fmt(brok)}</td>
-          </tr>
-          <tr>
-            <td class="td-label">Sales tax on brokerage<div class="td-note">13% of brokerage</div></td>
-            <td class="td-val">${fmt(st)}</td>
-          </tr>
-          <tr>
-            <td class="td-label">SECP laga<div class="td-note">0.0001% of value</div></td>
-            <td class="td-val">${fmt(secp)}</td>
-          </tr>
-          <tr>
-            <td class="td-label">PSX laga<div class="td-note">0.005% of value</div></td>
-            <td class="td-val">${fmt(psx)}</td>
-          </tr>
-          <tr>
-            <td class="td-label">NCCPL charges<div class="td-note">0.010% of value</div></td>
-            <td class="td-val">${fmt(nccpl)}</td>
-          </tr>
-          <tr>
-            <td class="td-label">CDC charges<div class="td-note">0.015% of value</div></td>
-            <td class="td-val">${fmt(cdc)}</td>
-          </tr>
-          ${isSell && taxableProfit > 0 ? `
-          <tr class="row-cgt-filer">
-            <td class="td-label">CGT on profit <span class="pill pill-green">Filer ${CGT_RATE_LABELS_F[holding]}</span><div class="td-note">On taxable profit of ${fmt(taxableProfit)}</div></td>
-            <td class="td-val">${fmt(cgtF)}</td>
-          </tr>
-          <tr class="row-cgt-nonfiler">
-            <td class="td-label">CGT on profit <span class="pill pill-amber">Non-filer ${CGT_RATE_LABELS_NF[holding]}</span><div class="td-note">On taxable profit of ${fmt(taxableProfit)}</div></td>
-            <td class="td-val">${fmt(cgtNF)}</td>
-          </tr>
-          ` : isSell ? `
-          <tr><td class="td-label" style="color:var(--text-dim);">CGT — no taxable profit, no CGT due</td><td class="td-val" style="color:var(--text-dim);">—</td></tr>
-          ` : ''}
-          <tr class="row-subtotal">
-            <td class="td-label">Total deductions ${isSell ? '<span class="pill pill-green">filer</span>' : ''}</td>
-            <td class="td-val">${fmt(totalDedF)}</td>
-          </tr>
-          ${isSell ? `
-          <tr class="row-subtotal">
-            <td class="td-label">Total deductions <span class="pill pill-amber">non-filer</span></td>
-            <td class="td-val">${fmt(totalDedNF)}</td>
-          </tr>` : ''}
-        </table>
-      </div>`;
-    }
-
-    document.getElementById('buyBreakdown').innerHTML = makeBreakdown(
-      'Buy side', buyGross, buyBrok, buyST, buySecp, buyPsx, buyNccpl, buyCdc,
-      buyDed, buyDed, buyMode, false
-    );
-    document.getElementById('sellBreakdown').innerHTML = makeBreakdown(
-      'Sell side', sellGross, sellBrok, sellST, sellSecp, sellPsx, sellNccpl, sellCdc,
-      sellTotalDedF, sellTotalDedNF, sellMode, true
-    );
-
-    document.getElementById('noteBox').innerHTML = `
-      <strong style="color:var(--accent);">Important notes</strong><br>
-      CGT is computed on taxable profit (sell gross minus total buy cost including all buy-side charges) and deducted automatically by NCCPL at settlement. Brokerage: ₨${flatPer}/share for prices ≤ ₨20; ${bPct}% of value for prices above ₨20. Regulatory levies (SECP, PSX, NCCPL, CDC) are approximate — exact amounts may differ slightly depending on your broker and transaction type. This calculator does not include WHT on dividends (Section 150) — that is a separate 15%/30% deduction on dividend income only, not on trades. Always cross-check against your broker's trade confirmation slip.
-    `;
-
-    document.getElementById('results').style.display = 'block';
-    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+window.addEventListener('load',()=>{
+  var url=localStorage.getItem('psx_script_url');
+  if(url)document.getElementById('scriptUrl').value=url;
+  updateBadge();
+});
 </script>
 </body>
 </html>
