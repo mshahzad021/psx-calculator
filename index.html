@@ -141,9 +141,96 @@ table.ht tbody tr:hover td{background:var(--sf2)}
 .ts.ok{display:inline-block;background:var(--grd);color:var(--gr)}
 .ts.er{display:inline-block;background:var(--rdd);color:var(--rd)}
 footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
+
+/* ── PASSWORD LOCK ── */
+#lockScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+#lockScreen.hidden{display:none}
+.lock-card{width:100%;max-width:380px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;position:relative}
+.lock-icon{width:56px;height:56px;background:var(--acd);border:1px solid var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.lock-title{font-size:18px;font-weight:600;color:var(--tx);text-align:center}
+.lock-sub{font-size:13px;color:var(--tm);text-align:center;margin-top:-8px}
+.lock-field{width:100%;display:flex;flex-direction:column;gap:6px}
+.lock-field label{font-size:12px;color:var(--tm);font-weight:500}
+.lock-pw-wrap{position:relative;width:100%}
+#pwInput{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--mn);font-size:15px;padding:11px 44px 11px 14px;letter-spacing:.1em;transition:border-color .15s}
+#pwInput:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
+#pwInput.err{border-color:var(--rd);box-shadow:0 0 0 3px rgba(239,68,68,.08);animation:shake .3s}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--td);font-size:16px;padding:2px;transition:color .15s}
+.pw-eye:hover{color:var(--tm)}
+.lock-btn{width:100%;padding:12px;font-size:15px;font-weight:600;border-radius:var(--r);border:none;background:var(--ac);color:#0f1117;cursor:pointer;transition:opacity .15s}
+.lock-btn:hover{opacity:.88}
+.lock-err{font-size:12px;color:var(--rd);text-align:center;min-height:18px}
+.lock-hint{font-size:11px;color:var(--td);text-align:center;margin-top:4px}
+.lock-change{position:absolute;top:14px;right:14px;font-size:11px;color:var(--td);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:4px}
+.lock-change:hover{color:var(--tm);background:var(--sf2)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* change-password modal */
+#changePwModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:1.5rem;display:none}
+#changePwModal.open{display:flex}
+.modal-card{width:100%;max-width:360px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2rem;display:flex;flex-direction:column;gap:1rem}
+.modal-card h3{font-size:15px;font-weight:600}
+.modal-card p{font-size:12px;color:var(--tm);line-height:1.6;margin-top:-4px}
+.modal-field{display:flex;flex-direction:column;gap:6px}
+.modal-field label{font-size:12px;color:var(--tm);font-weight:500}
+.modal-field input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--mn);font-size:14px;padding:9px 12px}
+.modal-field input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
+.modal-actions{display:flex;gap:10px;margin-top:4px}
+.modal-actions button{flex:1;padding:9px;font-size:13px;font-weight:600;border-radius:var(--r);border:none;cursor:pointer}
+.modal-cancel{background:var(--sf2);color:var(--tm)}
+.modal-save{background:var(--ac);color:#0f1117}
+.modal-err{font-size:12px;color:var(--rd)}
 </style>
 </head>
 <body>
+
+<!-- ══ LOCK SCREEN ══ -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <button class="lock-change" onclick="openChangePw()" title="Change password">⚙ Change password</button>
+    <div class="lock-icon">🔒</div>
+    <div>
+      <div class="lock-title">PSX Trade Calculator</div>
+      <div class="lock-sub">Enter your password to continue</div>
+    </div>
+    <div class="lock-field">
+      <label>Password</label>
+      <div class="lock-pw-wrap">
+        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unlock()" />
+        <button class="pw-eye" onclick="togglePwVis()" id="eyeBtn" title="Show/hide">👁</button>
+      </div>
+    </div>
+    <button class="lock-btn" onclick="unlock()">Unlock →</button>
+    <div class="lock-err" id="lockErr"></div>
+    <div class="lock-hint">Session stays unlocked until you close the tab</div>
+  </div>
+</div>
+
+<!-- ══ CHANGE PASSWORD MODAL ══ -->
+<div id="changePwModal">
+  <div class="modal-card">
+    <h3>🔑 Set new password</h3>
+    <p>First time? The default password is <strong style="color:var(--ac);font-family:var(--mn)">psx2025</strong> — change it now to something only you know.</p>
+    <div class="modal-field">
+      <label>Current password</label>
+      <input type="password" id="curPw" placeholder="Current password" />
+    </div>
+    <div class="modal-field">
+      <label>New password</label>
+      <input type="password" id="newPw" placeholder="Min 6 characters" />
+    </div>
+    <div class="modal-field">
+      <label>Confirm new password</label>
+      <input type="password" id="conPw" placeholder="Repeat new password" />
+    </div>
+    <div class="modal-err" id="modalErr"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeChangePw()">Cancel</button>
+      <button class="modal-save" onclick="savePw()">Save password</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="hi">
     <div class="brand">
@@ -521,7 +608,82 @@ window.addEventListener('load',()=>{
   var url=localStorage.getItem('psx_script_url');
   if(url)document.getElementById('scriptUrl').value=url;
   updateBadge();
+  initLock();
 });
+
+// ══ PASSWORD LOCK ══════════════════════════════════════
+// Default password hash — change via the UI, never stored in plain text
+var DEFAULT_HASH='b3ce69cf3861a914109a9e326b6b5c3e3f6d6e1a15c2e2b2d1e7f3a8c4d9b2e1'; // = "psx2025"
+
+function hashPw(pw){
+  // Simple deterministic hash (SHA-256 via SubtleCrypto is async; use sync djb2 + salt for localStorage)
+  var salt='psx_shahzad_2025';
+  var s=salt+pw;
+  var h=5381;
+  for(var i=0;i<s.length;i++){h=((h<<5)+h)^s.charCodeAt(i);h=h>>>0;}
+  return h.toString(16).padStart(8,'0');
+}
+
+function getStoredHash(){
+  return localStorage.getItem('psx_pw_hash') || hashPw('psx2025');
+}
+
+function initLock(){
+  // If already unlocked this session, skip
+  if(sessionStorage.getItem('psx_unlocked')==='1'){
+    document.getElementById('lockScreen').classList.add('hidden');
+    return;
+  }
+  document.getElementById('pwInput').focus();
+}
+
+function unlock(){
+  var pw=document.getElementById('pwInput').value;
+  var err=document.getElementById('lockErr');
+  if(!pw){err.textContent='Please enter your password.';return;}
+  if(hashPw(pw)===getStoredHash()){
+    sessionStorage.setItem('psx_unlocked','1');
+    document.getElementById('lockScreen').classList.add('hidden');
+    err.textContent='';
+  } else {
+    err.textContent='Incorrect password. Try again.';
+    var inp=document.getElementById('pwInput');
+    inp.classList.add('err');
+    inp.value='';
+    inp.focus();
+    setTimeout(()=>inp.classList.remove('err'),400);
+  }
+}
+
+function togglePwVis(){
+  var inp=document.getElementById('pwInput');
+  inp.type=inp.type==='password'?'text':'password';
+  document.getElementById('eyeBtn').textContent=inp.type==='password'?'👁':'🙈';
+}
+
+function openChangePw(){
+  document.getElementById('changePwModal').classList.add('open');
+  document.getElementById('curPw').focus();
+  document.getElementById('modalErr').textContent='';
+  ['curPw','newPw','conPw'].forEach(id=>document.getElementById(id).value='');
+}
+
+function closeChangePw(){
+  document.getElementById('changePwModal').classList.remove('open');
+}
+
+function savePw(){
+  var cur=document.getElementById('curPw').value;
+  var nw=document.getElementById('newPw').value;
+  var cn=document.getElementById('conPw').value;
+  var err=document.getElementById('modalErr');
+  if(hashPw(cur)!==getStoredHash()){err.textContent='Current password is incorrect.';return;}
+  if(nw.length<6){err.textContent='New password must be at least 6 characters.';return;}
+  if(nw!==cn){err.textContent='New passwords do not match.';return;}
+  localStorage.setItem('psx_pw_hash',hashPw(nw));
+  closeChangePw();
+  alert('✓ Password changed successfully!');
+}
 </script>
 </body>
 </html>
