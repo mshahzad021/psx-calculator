@@ -4,56 +4,90 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>PSX Trade Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0f1117;--sf:#1a1d27;--sf2:#22263a;--bd:#2e3350;--ac:#00d4aa;--acd:rgba(0,212,170,.12);--acd2:rgba(0,212,170,.06);--tx:#e8eaf0;--tm:#7b82a0;--td:#4a5070;--gr:#22c55e;--grd:rgba(34,197,94,.12);--rd:#ef4444;--rdd:rgba(239,68,68,.12);--am:#f59e0b;--amd:rgba(245,158,11,.12);--bl:#3b82f6;--bld:rgba(59,130,246,.12);--fn:'Inter',system-ui,sans-serif;--mn:'JetBrains Mono','Fira Code',monospace;--r:8px;--rl:12px}
+:root{
+  --bg:#0f1117;--sf:#1a1d27;--sf2:#22263a;--bd:#2e3350;
+  --ac:#00d4aa;--acd:rgba(0,212,170,.12);--acd2:rgba(0,212,170,.06);
+  --tx:#e8eaf0;--tm:#7b82a0;--td:#4a5070;
+  --gr:#22c55e;--grd:rgba(34,197,94,.12);
+  --rd:#ef4444;--rdd:rgba(239,68,68,.12);
+  --am:#f59e0b;--amd:rgba(245,158,11,.12);
+  --bl:#3b82f6;--bld:rgba(59,130,246,.12);
+  --fn:'Inter',system-ui,sans-serif;
+  --mn:'JetBrains Mono','Fira Code',monospace;
+  --r:8px;--rl:12px
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;line-height:1.6}
 body{min-height:100vh;padding-bottom:4rem}
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-header{background:linear-gradient(135deg,#0f1117,#1a1d27,#0f1117);border-bottom:1px solid var(--bd);padding:2rem 0 1.5rem;position:relative;overflow:hidden}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0f1117,#1a1d27,#0f1117);border-bottom:1px solid var(--bd);padding:1.5rem 0;position:relative;overflow:hidden}
 header::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(0,212,170,.08),transparent 70%);pointer-events:none}
-.hi{max-width:960px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.hi{max-width:980px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 .brand{display:flex;align-items:center;gap:12px}
 .bi{width:40px;height:40px;background:var(--acd);border:1px solid var(--ac);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px}
 .bt h1{font-size:18px;font-weight:600;letter-spacing:-.02em}
 .bt p{font-size:12px;color:var(--tm)}
 .badges{display:flex;gap:8px;flex-wrap:wrap}
-.badge{font-size:11px;font-weight:500;padding:4px 10px;border-radius:999px;border:1px solid var(--bd);color:var(--tm);background:var(--sf)}
+.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--bd);color:var(--tm);background:var(--sf)}
 .badge.gr{border-color:var(--gr);color:var(--gr);background:var(--grd)}
 .badge.ac{border-color:var(--ac);color:var(--ac);background:var(--acd)}
-main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 0}
+
+/* MAIN */
+main{max-width:980px;margin:0 auto;padding:1.5rem 1.5rem 0}
+
+/* TABS */
 .tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:4px}
-.tab{flex:1;padding:8px 12px;font-size:13px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
+.tab{flex:1;padding:7px 10px;font-size:12px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--tm);cursor:pointer;transition:all .15s;text-align:center;white-space:nowrap}
 .tab:hover{color:var(--tx)}
 .tab.active{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
 .tp{display:none}
 .tp.active{display:block}
+
+/* COMMON */
 .sec{margin-bottom:1.75rem}
 .sl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--td);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .sl::after{content:'';flex:1;height:1px;background:var(--bd)}
 .fc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:640px){.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
-@media(max-width:400px){.g3,.g4,.g2{grid-template-columns:1fr}}
+@media(max-width:700px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+@media(max-width:420px){.g4,.g3{grid-template-columns:1fr}}
+
+/* FIELDS */
 .fld{display:flex;flex-direction:column;gap:6px}
 .fld label{font-size:12px;color:var(--tm);font-weight:500}
 .iw{position:relative}
 .ip{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--td);font-family:var(--mn);pointer-events:none}
-input[type=number],input[type=text],select{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--mn);font-size:14px;padding:9px 12px;transition:border-color .15s;-moz-appearance:textfield}
+input[type=number],input[type=text],select{
+  width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);
+  color:var(--tx);font-family:var(--mn);font-size:14px;padding:9px 12px;
+  transition:border-color .15s;-moz-appearance:textfield
+}
 select{font-family:var(--fn)}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input.hp{padding-left:36px}
 input:focus,select:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
 input:hover,select:hover{border-color:#3e4460}
 input[readonly]{opacity:.5;cursor:default}
+
+/* TOGGLE GROUP */
 .tg{display:flex;gap:6px;flex-wrap:wrap}
 .tb{flex:1;min-width:90px;padding:8px 12px;font-size:12px;font-weight:500;border-radius:var(--r);border:1px solid var(--bd);background:var(--bg);color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
 .tb:hover{border-color:#3e4460;color:var(--tx)}
 .tb.active{background:var(--acd);border-color:var(--ac);color:var(--ac)}
+
+/* RATE INFO */
 .ri{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tm);background:var(--acd2);border:1px solid rgba(0,212,170,.15);border-radius:var(--r);padding:8px 12px;margin-bottom:12px}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0}
+
+/* BUTTONS */
 .btn{padding:10px 20px;font-size:14px;font-weight:600;border-radius:var(--r);border:none;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:-.01em}
 .btn:active{transform:scale(.98)}
 .btn-p{background:var(--ac);color:#0f1117;width:100%;padding:13px;font-size:15px;margin-top:4px}
@@ -66,6 +100,8 @@ input[readonly]{opacity:.5;cursor:default}
 .btn-st{background:var(--sf2);color:var(--tm);border:1px solid var(--bd);font-size:13px}
 .btn-st:hover{color:var(--tx)}
 .btn-d{background:var(--rdd);color:var(--rd);border:1px solid rgba(239,68,68,.35);font-size:12px;padding:6px 14px}
+
+/* CALC RESULTS */
 #results{display:none}
 .ss{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
 @media(max-width:600px){.ss{grid-template-columns:1fr 1fr}}
@@ -103,6 +139,8 @@ table.bt tr:last-child td{border-bottom:none}
 .pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;margin-left:6px;vertical-align:middle}
 .pg{background:var(--grd);color:var(--gr)}
 .pa{background:var(--amd);color:var(--am)}
+
+/* SAVE PANEL */
 .sp{background:var(--sf);border:1px solid rgba(34,197,94,.25);border-radius:var(--rl);padding:1.25rem 1.5rem;margin-top:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
 .spi{display:flex;flex-direction:column;gap:4px}
 .spi strong{font-size:14px;font-weight:600}
@@ -113,7 +151,9 @@ table.bt tr:last-child td{border-bottom:none}
 .sts.er{background:var(--rdd);color:var(--rd)}
 .sts.ld{background:var(--acd);color:var(--ac)}
 .nb{background:var(--sf2);border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:var(--r);padding:12px 16px;font-size:12px;color:var(--tm);line-height:1.7;margin-top:1rem}
-.he{text-align:center;padding:4rem 2rem;color:var(--td);font-size:14px}
+
+/* HISTORY */
+.he{text-align:center;padding:4rem 2rem;color:var(--td);font-size:14px;line-height:1.8}
 .hc{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem}
 .ms{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
 @media(max-width:640px){.ms{grid-template-columns:1fr 1fr}}
@@ -126,6 +166,8 @@ table.ht td.nm{font-family:var(--mn);text-align:right;color:var(--tx)}
 table.ht td.ps{font-family:var(--mn);text-align:right;color:var(--gr);font-weight:500}
 table.ht td.ng{font-family:var(--mn);text-align:right;color:var(--rd);font-weight:500}
 table.ht tbody tr:hover td{background:var(--sf2)}
+
+/* SETTINGS */
 .ss3{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.5rem}
 .ss3 h3{font-size:14px;font-weight:600;margin-bottom:4px}
 .ss3 p{font-size:12px;color:var(--tm);margin-bottom:1rem;line-height:1.6}
@@ -137,65 +179,78 @@ table.ht tbody tr:hover td{background:var(--sf2)}
 .stx strong{color:var(--tx)}
 .uiw{display:flex;gap:10px;align-items:center;margin-top:.75rem;flex-wrap:wrap}
 .uiw input{flex:1;min-width:200px}
-.ts{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:500;display:none}
-.ts.ok{display:inline-block;background:var(--grd);color:var(--gr)}
-.ts.er{display:inline-block;background:var(--rdd);color:var(--rd)}
-footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
+.ts2{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:500;display:none}
+.ts2.ok{display:inline-block;background:var(--grd);color:var(--gr)}
+.ts2.er{display:inline-block;background:var(--rdd);color:var(--rd)}
 
 /* ── DASHBOARD ── */
-.db-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
-@media(max-width:700px){.db-kpi{grid-template-columns:1fr 1fr}}
-@media(max-width:380px){.db-kpi{grid-template-columns:1fr}}
-.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:4px}
+.db-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem}
+.db-top-right{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.db-period{font-size:12px;padding:6px 10px;font-family:var(--fn);width:auto}
+.db-refresh{background:var(--acd);color:var(--ac);border:1px solid rgba(0,212,170,.3);font-size:12px;padding:6px 14px;border-radius:var(--r);cursor:pointer;font-weight:500;transition:opacity .15s}
+.db-refresh:hover{opacity:.85}
+.db-refresh:disabled{opacity:.4;cursor:not-allowed}
+.db-source{font-size:12px;color:var(--tm);margin-top:2px}
+.db-empty{text-align:center;padding:4rem 2rem;color:var(--td);font-size:13px;line-height:1.8}
+
+/* KPI cards */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem}
+@media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.kpi-row{grid-template-columns:1fr}}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1rem 1.25rem}
 .kpi.kpi-gr{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06)}
 .kpi.kpi-rd{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06)}
 .kpi.kpi-ac{border-color:rgba(0,212,170,.3);background:rgba(0,212,170,.06)}
-.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--td)}
-.kpi-val{font-family:var(--mn);font-size:22px;font-weight:500;color:var(--tx)}
+.kpi.kpi-am{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.06)}
+.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--td);margin-bottom:4px}
+.kpi-val{font-family:var(--mn);font-size:22px;font-weight:500;color:var(--tx);margin-bottom:2px}
 .kpi.kpi-gr .kpi-val{color:var(--gr)}
 .kpi.kpi-rd .kpi-val{color:var(--rd)}
 .kpi.kpi-ac .kpi-val{color:var(--ac)}
+.kpi.kpi-am .kpi-val{color:var(--am)}
 .kpi-sub{font-size:11px;color:var(--tm)}
-.db-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem}
-@media(max-width:640px){.db-row{grid-template-columns:1fr}}
-.chart-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.25rem}
-.chart-card.full{grid-column:1/-1}
-.chart-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:4px}
-.chart-sub{font-size:11px;color:var(--tm);margin-bottom:1rem}
-.chart-wrap{position:relative}
-.db-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
-.db-filter select{width:auto;font-size:12px;padding:6px 10px;font-family:var(--fn)}
-.db-filter label{font-size:12px;color:var(--tm)}
-.db-empty{text-align:center;padding:3rem 2rem;color:var(--td);font-size:13px;line-height:1.8}
-.db-refresh{background:var(--acd);color:var(--ac);border:1px solid rgba(0,212,170,.3);font-size:12px;padding:6px 14px;border-radius:var(--r);cursor:pointer;font-weight:500}
-.db-refresh:hover{opacity:.85}
-.db-loading{text-align:center;padding:2rem;color:var(--tm);font-size:13px}
-/* stock table */
-.stk-table{width:100%;border-collapse:collapse}
-.stk-table th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--td);padding:8px 12px;text-align:left;border-bottom:1px solid var(--bd)}
-.stk-table td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--bd);color:var(--tm)}
-.stk-table tr:last-child td{border-bottom:none}
-.stk-table td.nm{font-family:var(--mn);text-align:right;color:var(--tx)}
-.stk-table td.ps{font-family:var(--mn);text-align:right;color:var(--gr);font-weight:500}
-.stk-table td.ng{font-family:var(--mn);text-align:right;color:var(--rd);font-weight:500}
-.stk-table tbody tr:hover td{background:var(--sf2)}
+
+/* Chart cards */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.25rem}
+@media(max-width:640px){.chart-row{grid-template-columns:1fr}}
+.chart-row.single{grid-template-columns:1fr}
+.cc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.25rem}
+.cc-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.cc-sub{font-size:11px;color:var(--tm);margin-bottom:1rem}
+.cc-body{position:relative}
+
+/* Win rate ring */
+.ring-wrap{display:flex;align-items:center;justify-content:center;gap:2rem;padding:.5rem 0 0}
+.ring-leg{display:flex;flex-direction:column;gap:8px}
+.ring-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tm)}
+.ring-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Stock table */
 .sym-chip{display:inline-block;background:var(--acd);color:var(--ac);border:1px solid rgba(0,212,170,.25);border-radius:5px;font-family:var(--mn);font-size:11px;font-weight:600;padding:2px 7px}
-/* mini bar */
-.mini-bar-wrap{display:flex;align-items:center;gap:8px}
-.mini-bar{height:6px;border-radius:3px;min-width:4px;transition:width .3s}
+.stk-wrap{overflow-x:auto}
+table.stk{width:100%;border-collapse:collapse;min-width:600px}
+table.stk th{padding:9px 12px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--td);background:var(--sf2);border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+table.stk td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--bd);color:var(--tm);white-space:nowrap}
+table.stk tr:last-child td{border-bottom:none}
+table.stk tbody tr:hover td{background:var(--sf2)}
+table.stk td.nm{font-family:var(--mn);text-align:right;color:var(--tx)}
+table.stk td.ps{font-family:var(--mn);text-align:right;color:var(--gr);font-weight:500}
+table.stk td.ng{font-family:var(--mn);text-align:right;color:var(--rd);font-weight:500}
+.bar-cell{display:flex;align-items:center;gap:6px}
+.mini-bar{height:6px;border-radius:3px;min-width:4px}
 .mini-bar.pos{background:var(--gr)}
 .mini-bar.neg{background:var(--rd)}
-/* win rate ring */
-.ring-wrap{display:flex;align-items:center;justify-content:center;gap:2rem;padding:.5rem 0}
-.ring-legend{display:flex;flex-direction:column;gap:10px}
-.ring-legend-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tm)}
-.ring-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-</style>
-#lockScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+
+/* Portfolio section */
+.port-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.25rem}
+@media(max-width:640px){.port-row{grid-template-columns:1fr 1fr}}
+
+/* ── PASSWORD LOCK ── */
+#lockScreen{position:absolute;top:0;left:0;width:100%;min-height:100vh;z-index:9999;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:5rem 1.5rem 2rem}
 #lockScreen.hidden{display:none}
 .lock-card{width:100%;max-width:380px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;position:relative}
 .lock-icon{width:56px;height:56px;background:var(--acd);border:1px solid var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
-.lock-title{font-size:18px;font-weight:600;color:var(--tx);text-align:center}
+.lock-title{font-size:18px;font-weight:600;text-align:center}
 .lock-sub{font-size:13px;color:var(--tm);text-align:center;margin-top:-8px}
 .lock-field{width:100%;display:flex;flex-direction:column;gap:6px}
 .lock-field label{font-size:12px;color:var(--tm);font-weight:500}
@@ -213,9 +268,9 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 .lock-change:hover{color:var(--tm);background:var(--sf2)}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 
-/* change-password modal */
-#changePwModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:1.5rem;display:none}
-#changePwModal.open{display:flex}
+/* Change-pw modal */
+.modal-overlay{display:none;position:absolute;top:0;left:0;width:100%;min-height:100vh;z-index:10000;background:rgba(0,0,0,.7);align-items:flex-start;justify-content:center;padding:6rem 1.5rem}
+.modal-overlay.open{display:flex}
 .modal-card{width:100%;max-width:360px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2rem;display:flex;flex-direction:column;gap:1rem}
 .modal-card h3{font-size:15px;font-weight:600}
 .modal-card p{font-size:12px;color:var(--tm);line-height:1.6;margin-top:-4px}
@@ -228,24 +283,23 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 .modal-cancel{background:var(--sf2);color:var(--tm)}
 .modal-save{background:var(--ac);color:#0f1117}
 .modal-err{font-size:12px;color:var(--rd)}
+
+footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.25rem 0;text-align:center;font-size:12px;color:var(--td)}
 </style>
 </head>
-<body>
+<body style="position:relative">
 
-<!-- ══ LOCK SCREEN ══ -->
+<!-- LOCK SCREEN -->
 <div id="lockScreen">
   <div class="lock-card">
-    <button class="lock-change" onclick="openChangePw()" title="Change password">⚙ Change password</button>
+    <button class="lock-change" onclick="openChangePw()">⚙ Change password</button>
     <div class="lock-icon">🔒</div>
-    <div>
-      <div class="lock-title">PSX Trade Calculator</div>
-      <div class="lock-sub">Enter your password to continue</div>
-    </div>
+    <div><div class="lock-title">PSX Trade Calculator</div><div class="lock-sub">Enter your password to continue</div></div>
     <div class="lock-field">
       <label>Password</label>
       <div class="lock-pw-wrap">
-        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unlock()" />
-        <button class="pw-eye" onclick="togglePwVis()" id="eyeBtn" title="Show/hide">👁</button>
+        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unlock()"/>
+        <button class="pw-eye" onclick="togglePwVis()" id="eyeBtn">👁</button>
       </div>
     </div>
     <button class="lock-btn" onclick="unlock()">Unlock →</button>
@@ -254,23 +308,14 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   </div>
 </div>
 
-<!-- ══ CHANGE PASSWORD MODAL ══ -->
-<div id="changePwModal">
+<!-- CHANGE PW MODAL -->
+<div class="modal-overlay" id="changePwModal">
   <div class="modal-card">
     <h3>🔑 Set new password</h3>
-    <p>First time? The default password is <strong style="color:var(--ac);font-family:var(--mn)">psx2025</strong> — change it now to something only you know.</p>
-    <div class="modal-field">
-      <label>Current password</label>
-      <input type="password" id="curPw" placeholder="Current password" />
-    </div>
-    <div class="modal-field">
-      <label>New password</label>
-      <input type="password" id="newPw" placeholder="Min 6 characters" />
-    </div>
-    <div class="modal-field">
-      <label>Confirm new password</label>
-      <input type="password" id="conPw" placeholder="Repeat new password" />
-    </div>
+    <p>First time? Default password is <strong style="color:var(--ac);font-family:var(--mn)">psx2025</strong> — change it to something only you know.</p>
+    <div class="modal-field"><label>Current password</label><input type="password" id="curPw" placeholder="Current password"/></div>
+    <div class="modal-field"><label>New password</label><input type="password" id="newPw" placeholder="Min 6 characters"/></div>
+    <div class="modal-field"><label>Confirm new password</label><input type="password" id="conPw" placeholder="Repeat new password"/></div>
     <div class="modal-err" id="modalErr"></div>
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeChangePw()">Cancel</button>
@@ -283,7 +328,7 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   <div class="hi">
     <div class="brand">
       <div class="bi">📈</div>
-      <div class="bt"><h1>PSX Trade Calculator</h1><p>Brokerage · Levies · CGT · Google Sheets sync</p></div>
+      <div class="bt"><h1>PSX Trade Calculator</h1><p>Brokerage · Levies · CGT · Analytics</p></div>
     </div>
     <div class="badges">
       <span class="badge gr">JS Global</span>
@@ -297,11 +342,11 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 <div class="tabs">
   <button class="tab active" onclick="switchTab('calc',this)">📊 Calculator</button>
   <button class="tab" onclick="switchTab('dashboard',this)">📈 Dashboard</button>
-  <button class="tab" onclick="switchTab('history',this)">📋 Trade History</button>
-  <button class="tab" onclick="switchTab('settings',this)">⚙️ Sheet Setup</button>
+  <button class="tab" onclick="switchTab('history',this)">📋 History</button>
+  <button class="tab" onclick="switchTab('settings',this)">⚙️ Settings</button>
 </div>
 
-<!-- CALCULATOR -->
+<!-- ═══ CALCULATOR ═══ -->
 <div class="tp active" id="tab-calc">
   <div class="sec">
     <div class="sl">Trade details</div>
@@ -328,14 +373,13 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
       <button class="btn btn-p" onclick="calc()">Calculate all charges →</button>
     </div>
   </div>
-
   <div id="results">
     <div class="sec"><div class="sl">Net result</div><div class="ss" id="sumStrip"></div></div>
     <div class="sec"><div class="sl">Filer vs non-filer</div><div class="dp" id="dualPanel"></div></div>
     <div class="sec"><div class="sl">Buy side breakdown</div><div id="buyBkd"></div></div>
     <div class="sec"><div class="sl">Sell side breakdown</div><div id="sellBkd"></div></div>
     <div class="sp">
-      <div class="spi"><strong>Save this trade to Google Sheets</strong><span id="saveDesc">All calculated values will be appended as a new row</span></div>
+      <div class="spi"><strong>Save this trade to Google Sheets</strong><span id="saveDesc">All values will be appended as a new row</span></div>
       <div class="sa">
         <button class="btn btn-s" id="saveBtn" onclick="saveToSheet()">💾 Save to Sheet</button>
         <button class="btn btn-e" onclick="exportCSV()">⬇ Download CSV</button>
@@ -346,36 +390,57 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   </div>
 </div>
 
-<!-- HISTORY -->
+<!-- ═══ DASHBOARD ═══ -->
+<div class="tp" id="tab-dashboard">
+  <div class="db-top">
+    <div>
+      <div class="sl" style="margin-bottom:2px">Analytics dashboard</div>
+      <div class="db-source" id="dbSrc">Showing local trade history</div>
+    </div>
+    <div class="db-top-right">
+      <select class="db-period" id="dbPeriod" onchange="renderDashboard()">
+        <option value="all">All time</option>
+        <option value="month">This month</option>
+        <option value="3m">Last 3 months</option>
+        <option value="6m">Last 6 months</option>
+        <option value="year">This year</option>
+      </select>
+      <button class="db-refresh" id="syncBtn" onclick="loadSheetData()">⟳ Sync from Sheet</button>
+    </div>
+  </div>
+  <div id="dbContent"><div class="db-empty">No trade data yet.<br>Save some trades from the Calculator tab, or click <strong>Sync from Sheet</strong> to load from Google Sheets.</div></div>
+</div>
+
+<!-- ═══ HISTORY ═══ -->
 <div class="tp" id="tab-history">
   <div class="sec">
     <div class="sl">Monthly summary</div>
     <div class="ms">
       <div class="sc"><div class="sl2">Total trades</div><div class="sv" id="mT">0</div></div>
       <div class="sc"><div class="sl2">Total buy cost</div><div class="sv" id="mB">₨0</div></div>
-      <div class="sc"><div class="sl2">Total CGT paid (filer)</div><div class="sv" id="mC">₨0</div></div>
-      <div class="sc pf"><div class="sl2">Total net profit (filer)</div><div class="sv" id="mP">₨0</div></div>
+      <div class="sc"><div class="sl2">Total CGT (filer)</div><div class="sv" id="mC">₨0</div></div>
+      <div class="sc pf"><div class="sl2">Net profit (filer)</div><div class="sv" id="mP">₨0</div></div>
     </div>
   </div>
   <div class="sec">
     <div class="hc">
       <div class="sl" style="flex:1;margin-bottom:0">Trade log</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-e" onclick="exportAll()">⬇ Export all CSV</button>
+        <button class="btn btn-e" onclick="exportAll()">⬇ Export CSV</button>
         <button class="btn btn-d" onclick="clearHist()">🗑 Clear history</button>
       </div>
     </div>
-    <div id="histContent"><div class="he">No trades recorded yet.<br>Calculate a trade and click "Save to Sheet" to log it.</div></div>
+    <div id="histContent"><div class="he">No trades recorded yet.</div></div>
   </div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ═══ SETTINGS ═══ -->
 <div class="tp" id="tab-settings">
   <div class="ss3">
-    <h3>Connect Google Sheets — one-time setup (5 minutes)</h3>
-    <p>Your app sends trade data to a Google Apps Script URL → the Script appends a row to your Sheet automatically. Completely free, no login required in the app.</p>
+    <h3>Connect Google Sheets — one-time setup (5 min)</h3>
+    <p>Your app sends trade data to a Google Apps Script URL → the Script appends a row to your Sheet. Also supports reading all rows back for the Dashboard.</p>
     <div class="step"><div class="sn">1</div><div class="stx"><strong>Open Google Sheets</strong>, create a new spreadsheet. Name it <strong>PSX Trade Log</strong>.</div></div>
-    <div class="step"><div class="sn">2</div><div class="stx"><strong>Go to Extensions → Apps Script.</strong> Delete all default code and paste the script below exactly.</div></div>
+    <div class="step"><div class="sn">2</div><div class="stx"><strong>Extensions → Apps Script.</strong> Delete default code and paste the script below.</div></div>
     <div class="scb" id="scriptCode">function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -413,23 +478,8 @@ function doGet(e) {
       var rows  = sheet.getDataRange().getValues();
       if (rows.length < 2) return ContentService.createTextOutput(JSON.stringify({status:"ok",data:[]})).setMimeType(ContentService.MimeType.JSON);
       var headers = rows[0];
-      var keyMap  = {
-        "Date":"date","Time":"time","Symbol":"symbol","Qty":"qty",
-        "Buy Price":"buyPrice","Sell Price":"sellPrice","Holding Period":"holdingPeriod",
-        "Gross Buy":"grossBuy","Gross Sell":"grossSell",
-        "Brokerage (Buy)":"brokerageBuy","Sales Tax (Buy)":"salesTaxBuy","Levies (Buy)":"leviesBuy","Total Buy Cost":"totalBuyCost",
-        "Brokerage (Sell)":"brokerageSell","Sales Tax (Sell)":"salesTaxSell","Levies (Sell)":"leviesSell",
-        "CGT (Filer)":"cgtFiler","CGT (Non-Filer)":"cgtNonFiler",
-        "Total Sell Ded (Filer)":"totalSellDedFiler","Total Sell Ded (Non-Filer)":"totalSellDedNonFiler",
-        "Net Proceeds (Filer)":"netProceedsFiler","Net Proceeds (Non-Filer)":"netProceedsNonFiler",
-        "Net Profit (Filer)":"netProfitFiler","Net Profit (Non-Filer)":"netProfitNonFiler",
-        "Return % (Filer)":"returnFiler","Return % (Non-Filer)":"returnNonFiler"
-      };
-      var data = rows.slice(1).map(function(row){
-        var obj={};
-        headers.forEach(function(h,i){ obj[keyMap[h]||h]=row[i]; });
-        return obj;
-      });
+      var keyMap = {"Date":"date","Time":"time","Symbol":"symbol","Qty":"qty","Buy Price":"buyPrice","Sell Price":"sellPrice","Holding Period":"holdingPeriod","Gross Buy":"grossBuy","Gross Sell":"grossSell","Brokerage (Buy)":"brokerageBuy","Sales Tax (Buy)":"salesTaxBuy","Levies (Buy)":"leviesBuy","Total Buy Cost":"totalBuyCost","Brokerage (Sell)":"brokerageSell","Sales Tax (Sell)":"salesTaxSell","Levies (Sell)":"leviesSell","CGT (Filer)":"cgtFiler","CGT (Non-Filer)":"cgtNonFiler","Total Sell Ded (Filer)":"totalSellDedFiler","Total Sell Ded (Non-Filer)":"totalSellDedNonFiler","Net Proceeds (Filer)":"netProceedsFiler","Net Proceeds (Non-Filer)":"netProceedsNonFiler","Net Profit (Filer)":"netProfitFiler","Net Profit (Non-Filer)":"netProfitNonFiler","Return % (Filer)":"returnFiler","Return % (Non-Filer)":"returnNonFiler"};
+      var data = rows.slice(1).map(function(row){var obj={};headers.forEach(function(h,i){obj[keyMap[h]||h]=row[i];});return obj;});
       return ContentService.createTextOutput(JSON.stringify({status:"ok",data:data})).setMimeType(ContentService.MimeType.JSON);
     } catch(err) {
       return ContentService.createTextOutput(JSON.stringify({status:"error",message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
@@ -438,63 +488,34 @@ function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({status:"ok",message:"PSX Calculator connected"})).setMimeType(ContentService.MimeType.JSON);
 }</div>
     <button class="btn btn-st" onclick="copyScript()" style="margin-bottom:1rem">📋 Copy script</button>
-    <div class="step"><div class="sn">3</div><div class="stx"><strong>Click Deploy → New deployment.</strong> Type: <strong>Web app</strong>. Execute as: <strong>Me</strong>. Who has access: <strong>Anyone</strong>. Click Deploy and authorize.</div></div>
-    <div class="step"><div class="sn">4</div><div class="stx"><strong>Copy the Web App URL</strong> (looks like <code>https://script.google.com/macros/s/ABC.../exec</code>) and paste below.</div></div>
+    <div class="step"><div class="sn">3</div><div class="stx"><strong>Deploy → New deployment.</strong> Type: Web app · Execute as: Me · Who has access: Anyone. Authorize when asked.</div></div>
+    <div class="step"><div class="sn">4</div><div class="stx"><strong>Copy the Web App URL</strong> and paste below.</div></div>
     <div class="uiw">
       <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"/>
       <button class="btn btn-st" onclick="testConn()">Test</button>
       <button class="btn btn-s" onclick="saveUrl()">Save URL</button>
-      <span class="ts" id="testSts"></span>
+      <span class="ts2" id="testSts"></span>
     </div>
   </div>
   <div class="ss3">
     <h3>What gets saved (26 columns per trade)</h3>
     <div class="scb" style="white-space:pre-wrap">Date · Time · Symbol · Qty · Buy Price · Sell Price · Holding Period
-Gross Buy · Gross Sell
-Brokerage (Buy) · Sales Tax (Buy) · Levies (Buy) · Total Buy Cost
-Brokerage (Sell) · Sales Tax (Sell) · Levies (Sell)
-CGT Filer · CGT Non-Filer
-Total Sell Ded Filer · Total Sell Ded Non-Filer
-Net Proceeds Filer · Net Proceeds Non-Filer
-Net Profit Filer · Net Profit Non-Filer
-Return % Filer · Return % Non-Filer</div>
-    <p>Headers are added automatically on first save. Add a SUM row at the bottom of your Sheet for instant monthly totals.</p>
-  </div>
-<!-- DASHBOARD -->
-<div class="tp" id="tab-dashboard">
-
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem">
-    <div>
-      <div class="sl" style="margin-bottom:2px">Analytics dashboard</div>
-      <div style="font-size:12px;color:var(--tm)" id="dbDataSource">Showing local trade history</div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <div class="db-filter" style="margin:0">
-        <label>Period</label>
-        <select id="dbPeriod" onchange="renderDashboard()">
-          <option value="all">All time</option>
-          <option value="month">This month</option>
-          <option value="3m">Last 3 months</option>
-          <option value="6m">Last 6 months</option>
-          <option value="year">This year</option>
-        </select>
-      </div>
-      <button class="db-refresh" onclick="loadSheetData()">⟳ Sync from Sheet</button>
-    </div>
-  </div>
-
-  <div id="dbContent">
-    <div class="db-empty">No trade data yet.<br>Save some trades from the Calculator tab, or click <strong>Sync from Sheet</strong> to load from Google Sheets.</div>
+Gross Buy · Gross Sell · Brokerage (Buy) · Sales Tax (Buy) · Levies (Buy) · Total Buy Cost
+Brokerage (Sell) · Sales Tax (Sell) · Levies (Sell) · CGT Filer · CGT Non-Filer
+Total Sell Ded Filer/Non-Filer · Net Proceeds Filer/Non-Filer
+Net Profit Filer/Non-Filer · Return % Filer/Non-Filer</div>
+    <p>Headers added automatically on first save. The Dashboard Sync button reads all rows back for charts.</p>
   </div>
 </div>
 
 </main>
-
-<footer>PSX Trade Calculator · FY 2025–26 · CGT deducted by NCCPL at settlement · Always verify against your broker's trade confirmation slip</footer>
+<footer>PSX Trade Calculator · FY 2025–26 · CGT deducted by NCCPL at settlement · Always verify against your broker's trade slip</footer>
 
 <script>
 var hldg=0,last=null,log=JSON.parse(localStorage.getItem('psx_trades')||'[]');
+var dbCharts={},sheetData=null;
 
+// ── TABS
 function switchTab(name,el){
   document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -508,11 +529,13 @@ document.querySelectorAll('#holding .tb').forEach(b=>{
   b.onclick=()=>{document.querySelectorAll('#holding .tb').forEach(x=>x.classList.remove('active'));b.classList.add('active');hldg=+b.dataset.val;};
 });
 
+// ── FORMAT
 function r2(n){return Math.round(n*100)/100;}
 function fmt(n){return '₨\u202f'+Math.abs(n).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtS(n){return(n>=0?'+':'−')+fmt(n);}
-function fmtK(n){return '₨\u202f'+(Math.abs(n)/1000).toFixed(1)+'k';}
+function fmtK(n){if(Math.abs(n)>=1000000)return '₨\u202f'+(n/1000000).toFixed(2)+'M';if(Math.abs(n)>=1000)return '₨\u202f'+(n/1000).toFixed(1)+'k';return fmt(n);}
 
+// ── FEES
 function broker(price,qty,pct,flat){return price<=20?qty*flat:price*qty*(pct/100);}
 function stax(b){return b*0.13;}
 function levies(v){return v*(0.000001+0.00005+0.0001+0.00015);}
@@ -520,6 +543,7 @@ var CGF=[.15,.125,.10,.075],CGNF=[.30,.25,.20,.15];
 var CGLf=['15%','12.5%','10%','7.5%'],CGLn=['30%','25%','20%','15%'];
 function cgt(profit,p,filer){return profit<=0?0:profit*(filer?CGF[p]:CGNF[p]);}
 
+// ── CALCULATOR
 function calc(){
   var qty=+document.getElementById('qty').value||0;
   var bp=+document.getElementById('buy').value||0;
@@ -528,7 +552,6 @@ function calc(){
   var flat=+document.getElementById('flatR').value||0.03;
   var sym=(document.getElementById('symbol').value||'').toUpperCase().trim();
   if(qty<=0||bp<=0||sp<=0){alert('Enter valid qty, buy price and sell price.');return;}
-
   var bgr=r2(qty*bp),bbr=r2(broker(bp,qty,pct,flat)),bst=r2(stax(bbr)),blv=r2(levies(bgr));
   var bdd=r2(bbr+bst+blv),btot=r2(bgr+bdd);
   var sgr=r2(qty*sp),sbr=r2(broker(sp,qty,pct,flat)),sst=r2(stax(sbr)),slv=r2(levies(sgr));
@@ -539,60 +562,56 @@ function calc(){
   var nf=r2(sgr-stf),nnf=r2(sgr-stnf);
   var prf=r2(nf-btot),prnf=r2(nnf-btot);
   var retf=btot>0?r2(prf/btot*100):0,retnf=btot>0?r2(prnf/btot*100):0;
-  var bm=bp<=20?'₨'+flat+'/share (price ≤ ₨20)':pct+'% of value';
-  var sm=sp<=20?'₨'+flat+'/share (price ≤ ₨20)':pct+'% of value';
+  var bm=bp<=20?'₨'+flat+'/share (≤₨20)':pct+'% of value';
+  var sm=sp<=20?'₨'+flat+'/share (≤₨20)':pct+'% of value';
   var hl=['under 1 year','1–2 years','2–3 years','over 3 years'][hldg];
-
   last={sym,qty,bp,sp,pct,flat,hl,bgr,sgr,bbr,bst,blv,btot,sbr,sst,slv,cgf,cgnf,stf,stnf,nf,nnf,prf,prnf,retf,retnf,tp};
-
   var pc=prf>=0?'pf':'ls';
   document.getElementById('sumStrip').innerHTML=
     '<div class="sc"><div class="sl2">Total buy cost</div><div class="sv">'+fmt(btot)+'</div><div class="ss2">'+qty.toLocaleString()+' shares @ ₨'+bp+'</div></div>'+
     '<div class="sc"><div class="sl2">Net proceeds (filer)</div><div class="sv">'+fmt(nf)+'</div><div class="ss2">After all charges + CGT</div></div>'+
-    '<div class="sc '+pc+'"><div class="sl2">Net profit / loss (filer)</div><div class="sv">'+fmtS(prf)+'</div><div class="ss2">Return: '+(retf>=0?'+':'')+retf.toFixed(2)+'%</div></div>';
-
+    '<div class="sc '+pc+'"><div class="sl2">Net profit/loss (filer)</div><div class="sv">'+fmtS(prf)+'</div><div class="ss2">Return: '+(retf>=0?'+':'')+retf.toFixed(2)+'%</div></div>';
   document.getElementById('dualPanel').innerHTML=
     '<div class="pnl"><div class="ph"><span class="pt">Tax filer (ATL)</span><span class="fb">Filer</span></div><table class="bt">'+
     '<tr><td class="tl">CGT rate ('+hl+')</td><td class="tv">'+CGLf[hldg]+'</td></tr>'+
     '<tr><td class="tl">CGT amount</td><td class="tv">'+fmt(cgf)+'</td></tr>'+
     '<tr><td class="tl">Total sell deductions</td><td class="tv">'+fmt(stf)+'</td></tr>'+
     '<tr><td class="tl">Net sell proceeds</td><td class="tv">'+fmt(nf)+'</td></tr>'+
-    '<tr><td class="tl" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">Net profit / loss</td><td class="tv" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prf)+'</td></tr>'+
+    '<tr><td class="tl" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">Net profit/loss</td><td class="tv" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prf)+'</td></tr>'+
     '<tr><td class="tl">Return %</td><td class="tv">'+retf.toFixed(2)+'%</td></tr></table></div>'+
     '<div class="pnl"><div class="ph"><span class="pt">Non-filer</span><span class="nfb">Non-filer</span></div><table class="bt">'+
     '<tr><td class="tl">CGT rate ('+hl+')</td><td class="tv">'+CGLn[hldg]+'</td></tr>'+
     '<tr><td class="tl">CGT amount</td><td class="tv">'+fmt(cgnf)+'</td></tr>'+
     '<tr><td class="tl">Total sell deductions</td><td class="tv">'+fmt(stnf)+'</td></tr>'+
     '<tr><td class="tl">Net sell proceeds</td><td class="tv">'+fmt(nnf)+'</td></tr>'+
-    '<tr><td class="tl" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">Net profit / loss</td><td class="tv" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prnf)+'</td></tr>'+
+    '<tr><td class="tl" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">Net profit/loss</td><td class="tv" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prnf)+'</td></tr>'+
     '<tr><td class="tl">Return %</td><td class="tv">'+retnf.toFixed(2)+'%</td></tr></table></div>';
-
   function mkBkd(side,gv,br,st,lv,totf,totnf,mode,isSell){
     return '<div class="bkd"><div class="bh"><span class="btt">'+side+'</span><span class="btv">'+fmt(gv)+'</span></div>'+
       '<table class="bt">'+
-      '<tr><td class="tl">Brokerage commission<div class="tn">'+mode+'</div></td><td class="tv">'+fmt(br)+'</td></tr>'+
-      '<tr><td class="tl">Sales tax on brokerage<div class="tn">13% of brokerage</div></td><td class="tv">'+fmt(st)+'</td></tr>'+
+      '<tr><td class="tl">Brokerage<div class="tn">'+mode+'</div></td><td class="tv">'+fmt(br)+'</td></tr>'+
+      '<tr><td class="tl">Sales tax on brokerage<div class="tn">13%</div></td><td class="tv">'+fmt(st)+'</td></tr>'+
       '<tr><td class="tl">Regulatory levies<div class="tn">SECP + PSX + NCCPL + CDC</div></td><td class="tv">'+fmt(lv)+'</td></tr>'+
       (isSell&&tp>0?
-        '<tr class="rcf"><td class="tl">CGT on profit <span class="pill pg">Filer '+CGLf[hldg]+'</span><div class="tn">Taxable profit: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgf)+'</td></tr>'+
-        '<tr class="rcn"><td class="tl">CGT on profit <span class="pill pa">Non-filer '+CGLn[hldg]+'</span><div class="tn">Taxable profit: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgnf)+'</td></tr>'
+        '<tr class="rcf"><td class="tl">CGT <span class="pill pg">Filer '+CGLf[hldg]+'</span><div class="tn">On: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgf)+'</td></tr>'+
+        '<tr class="rcn"><td class="tl">CGT <span class="pill pa">Non-filer '+CGLn[hldg]+'</span></td><td class="tv">'+fmt(cgnf)+'</td></tr>'
       :(isSell?'<tr><td class="tl" style="color:var(--td)">CGT — no profit, no tax</td><td class="tv" style="color:var(--td)">—</td></tr>':''))+
       '<tr class="rst"><td class="tl">Total deductions'+(isSell?' <span class="pill pg">filer</span>':'')+'</td><td class="tv">'+fmt(totf)+'</td></tr>'+
       (isSell?'<tr class="rst"><td class="tl">Total deductions <span class="pill pa">non-filer</span></td><td class="tv">'+fmt(totnf)+'</td></tr>':'')+
       '</table></div>';
   }
-
   document.getElementById('buyBkd').innerHTML=mkBkd('Buy side',bgr,bbr,bst,blv,bdd,bdd,bm,false);
   document.getElementById('sellBkd').innerHTML=mkBkd('Sell side',sgr,sbr,sst,slv,stf,stnf,sm,true);
   document.getElementById('saveDesc').textContent=sym?sym+' · '+qty.toLocaleString()+' shares · Profit: '+fmtS(prf):qty.toLocaleString()+' shares · Profit: '+fmtS(prf);
-  document.getElementById('noteBox').innerHTML='<strong style="color:var(--ac)">Important notes</strong><br>CGT is computed on taxable profit (sell gross minus full buy cost including buy-side charges) and deducted by NCCPL at settlement. Brokerage: ₨'+flat+'/share for prices ≤ ₨20; '+pct+'% of value above ₨20. Regulatory levies are approximate — verify against your broker\'s trade confirmation slip.';
+  document.getElementById('noteBox').innerHTML='<strong style="color:var(--ac)">Notes</strong><br>CGT on taxable profit (sell gross minus full buy cost). Brokerage: ₨'+flat+'/share for prices ≤ ₨20; '+pct+'% above ₨20. Verify against your trade confirmation slip.';
   document.getElementById('results').style.display='block';
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+// ── SAVE TO SHEET
 async function saveToSheet(){
   var url=localStorage.getItem('psx_script_url');
-  if(!url){alert('No Sheet URL saved. Go to ⚙️ Sheet Setup tab first.');return;}
+  if(!url){alert('Connect your Sheet first in ⚙️ Settings.');return;}
   if(!last){alert('Calculate a trade first.');return;}
   var btn=document.getElementById('saveBtn'),sts=document.getElementById('saveSts');
   btn.disabled=true;sts.textContent='Saving…';sts.className='sts ld';
@@ -612,10 +631,8 @@ async function saveToSheet(){
     var res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     var json=await res.json();
     if(json.status==='ok'){sts.textContent='✓ Saved to Sheet';sts.className='sts ok';}
-    else throw new Error(json.message||'Unknown error');
-  }catch(err){
-    sts.textContent='✓ Saved locally (Sheet: '+err.message.substring(0,35)+')';sts.className='sts er';
-  }
+    else throw new Error(json.message||'Error');
+  }catch(err){sts.textContent='✓ Saved locally (Sheet: '+err.message.substring(0,30)+')';sts.className='sts er';}
   btn.disabled=false;
   setTimeout(()=>{sts.textContent='';sts.className='sts';},6000);
 }
@@ -623,128 +640,299 @@ async function saveToSheet(){
 function exportCSV(){
   if(!last){alert('Calculate a trade first.');return;}
   var now=new Date(),r=last;
-  var h=['Date','Time','Symbol','Qty','Buy Price','Sell Price','Holding Period','Gross Buy','Gross Sell','Brokerage Buy','Sales Tax Buy','Levies Buy','Total Buy Cost','Brokerage Sell','Sales Tax Sell','Levies Sell','CGT Filer','CGT Non-Filer','Total Sell Ded Filer','Total Sell Ded Non-Filer','Net Proceeds Filer','Net Proceeds Non-Filer','Net Profit Filer','Net Profit Non-Filer','Return% Filer','Return% Non-Filer'];
+  var h=['Date','Time','Symbol','Qty','Buy Price','Sell Price','Holding','Gross Buy','Gross Sell','Brok Buy','ST Buy','Levies Buy','Total Buy','Brok Sell','ST Sell','Levies Sell','CGT Filer','CGT NonFiler','Sell Ded F','Sell Ded NF','Net Proc F','Net Proc NF','Net Profit F','Net Profit NF','Ret F','Ret NF'];
   var d=[now.toLocaleDateString('en-PK'),now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}),r.sym||'—',r.qty,r.bp,r.sp,r.hl,r.bgr,r.sgr,r.bbr,r.bst,r.blv,r.btot,r.sbr,r.sst,r.slv,r.cgf,r.cgnf,r.stf,r.stnf,r.nf,r.nnf,r.prf,r.prnf,r.retf,r.retnf];
-  dl(h.join(',')+'\n'+d.join(','),'psx_trade_'+(r.sym||'trade')+'_'+now.toISOString().slice(0,10)+'.csv');
+  dl(h.join(',')+'
+'+d.join(','),'psx_'+(r.sym||'trade')+'_'+now.toISOString().slice(0,10)+'.csv');
 }
-
 function exportAll(){
-  if(!log.length){alert('No trades in local history.');return;}
+  if(!log.length){alert('No trades.');return;}
   var h=Object.keys(log[0]).filter(k=>k!=='id');
-  var rows=log.map(t=>h.map(k=>t[k]??'').join(','));
-  dl(h.join(',')+'\n'+rows.join('\n'),'psx_all_trades_'+new Date().toISOString().slice(0,10)+'.csv');
+  dl(h.join(',')+'
+'+log.map(t=>h.map(k=>t[k]??'').join(',')).join('
+'),'psx_all_'+new Date().toISOString().slice(0,10)+'.csv');
 }
+function dl(c,n){var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download=n;a.click();}
 
-function dl(content,name){
-  var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(content);
-  a.download=name;a.click();
-}
-
+// ── HISTORY
 function renderHist(){
   if(!log.length){
-    document.getElementById('histContent').innerHTML='<div class="he">No trades recorded yet.<br>Calculate a trade and click "Save to Sheet" to log it.</div>';
-    ['mT','mB','mC','mP'].forEach(id=>document.getElementById(id).textContent=id==='mT'?'0':'₨0');
-    return;
+    document.getElementById('histContent').innerHTML='<div class="he">No trades yet. Calculate and save a trade to see it here.</div>';
+    ['mT','mB','mC','mP'].forEach(id=>document.getElementById(id).textContent=id==='mT'?'0':'₨0');return;
   }
-  var tB=log.reduce((s,t)=>s+(+t.totalBuyCost||0),0);
-  var tC=log.reduce((s,t)=>s+(+t.cgtFiler||0),0);
-  var tP=log.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
   document.getElementById('mT').textContent=log.length;
-  document.getElementById('mB').textContent=fmtK(tB);
-  document.getElementById('mC').textContent=fmtK(tC);
-  var mP=document.getElementById('mP');
-  mP.textContent=fmtK(tP);mP.style.color=tP>=0?'var(--gr)':'var(--rd)';
+  document.getElementById('mB').textContent=fmtK(log.reduce((s,t)=>s+(+t.totalBuyCost||0),0));
+  document.getElementById('mC').textContent=fmtK(log.reduce((s,t)=>s+(+t.cgtFiler||0),0));
+  var tp=log.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
+  var mP=document.getElementById('mP');mP.textContent=fmtK(tp);mP.style.color=tp>=0?'var(--gr)':'var(--rd)';
   var rows=[...log].reverse().map(t=>{
     var p=+t.netProfitFiler||0,pc=p>0?'ps':p<0?'ng':'nm';
     return '<tr><td>'+t.date+'</td><td style="color:var(--ac);font-weight:500">'+(t.symbol||'—')+'</td>'+
-      '<td class="nm">'+((+t.qty||0).toLocaleString())+'</td>'+
-      '<td class="nm">₨'+(+t.buyPrice||0).toFixed(2)+'</td>'+
-      '<td class="nm">₨'+(+t.sellPrice||0).toFixed(2)+'</td>'+
-      '<td>'+(t.holdingPeriod||'—')+'</td>'+
-      '<td class="nm">'+fmt(+t.totalBuyCost||0)+'</td>'+
-      '<td class="nm">'+fmt(+t.cgtFiler||0)+'</td>'+
-      '<td class="'+pc+'">'+fmtS(p)+'</td>'+
-      '<td class="'+pc+'">'+(+t.returnFiler||0).toFixed(2)+'%</td></tr>';
+      '<td class="nm">'+((+t.qty||0).toLocaleString())+'</td><td class="nm">₨'+(+t.buyPrice||0).toFixed(2)+'</td>'+
+      '<td class="nm">₨'+(+t.sellPrice||0).toFixed(2)+'</td><td>'+(t.holdingPeriod||'—')+'</td>'+
+      '<td class="nm">'+fmt(+t.totalBuyCost||0)+'</td><td class="nm">'+fmt(+t.cgtFiler||0)+'</td>'+
+      '<td class="'+pc+'">'+fmtS(p)+'</td><td class="'+pc+'">'+(+t.returnFiler||0).toFixed(2)+'%</td></tr>';
   }).join('');
   document.getElementById('histContent').innerHTML=
-    '<div class="htw"><table class="ht"><thead><tr>'+
-    '<th>Date</th><th>Symbol</th><th>Qty</th><th>Buy</th><th>Sell</th><th>Holding</th><th>Buy Cost</th><th>CGT (Filer)</th><th>Net Profit</th><th>Return</th>'+
-    '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+    '<div class="htw"><table class="ht"><thead><tr><th>Date</th><th>Symbol</th><th>Qty</th><th>Buy</th><th>Sell</th><th>Holding</th><th>Buy Cost</th><th>CGT</th><th>Net Profit</th><th>Return</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
-
 function clearHist(){
-  if(!confirm('Clear all local trade history? Your Google Sheet data is NOT affected.'))return;
+  if(!confirm('Clear all local trade history? Google Sheet data is NOT affected.'))return;
   log=[];localStorage.removeItem('psx_trades');renderHist();
 }
 
+// ── SETTINGS
 function saveUrl(){
   var url=document.getElementById('scriptUrl').value.trim();
-  if(!url.startsWith('https://script.google.com')){alert('That does not look like a valid Apps Script URL.');return;}
-  localStorage.setItem('psx_script_url',url);
-  updateBadge();alert('URL saved! You can now save trades to your Google Sheet.');
+  if(!url.startsWith('https://script.google.com')){alert('Not a valid Apps Script URL.');return;}
+  localStorage.setItem('psx_script_url',url);updateBadge();alert('✓ URL saved!');
 }
-
 async function testConn(){
   var url=document.getElementById('scriptUrl').value.trim();
-  if(!url){alert('Paste your Apps Script URL first.');return;}
-  var sts=document.getElementById('testSts');
-  sts.textContent='Testing…';sts.className='ts ok';
-  try{
-    var res=await fetch(url+'?test=1');
-    var json=await res.json();
-    if(json.status==='ok'){sts.textContent='✓ Connected';sts.className='ts ok';}
-    else throw new Error('Bad response');
-  }catch(e){sts.textContent='✗ Failed — check URL & deployment';sts.className='ts er';}
+  if(!url){alert('Paste URL first.');return;}
+  var sts=document.getElementById('testSts');sts.textContent='Testing…';sts.className='ts2 ok';
+  try{var r=await fetch(url+'?test=1');var j=await r.json();if(j.status==='ok'){sts.textContent='✓ Connected';sts.className='ts2 ok';}else throw new Error();}
+  catch(e){sts.textContent='✗ Failed';sts.className='ts2 er';}
 }
-
 function copyScript(){
-  var t=document.getElementById('scriptCode').textContent;
-  navigator.clipboard.writeText(t).then(()=>alert('Script copied!')).catch(()=>alert('Copy failed — select and copy manually.'));
+  navigator.clipboard.writeText(document.getElementById('scriptCode').textContent).then(()=>alert('Copied!')).catch(()=>alert('Copy failed — select manually.'));
 }
-
 function updateBadge(){
   var url=localStorage.getItem('psx_script_url'),b=document.getElementById('sheetBadge');
   if(url){b.textContent='Sheet: connected';b.style.cssText='border-color:var(--gr);color:var(--gr);background:var(--grd)';}
   else{b.textContent='Sheet: not connected';b.style.cssText='';}
 }
 
-window.addEventListener('load',()=>{
+// ── DASHBOARD
+function getDbTrades(){
+  var src=sheetData||log;
+  var period=document.getElementById('dbPeriod').value;
+  if(period==='all')return src;
+  var now=new Date(),cut=new Date();
+  if(period==='month')cut=new Date(now.getFullYear(),now.getMonth(),1);
+  else if(period==='3m'){cut=new Date(now);cut.setMonth(cut.getMonth()-3);}
+  else if(period==='6m'){cut=new Date(now);cut.setMonth(cut.getMonth()-6);}
+  else if(period==='year')cut=new Date(now.getFullYear(),0,1);
+  return src.filter(t=>{var d=new Date(t.date);return !isNaN(d)&&d>=cut;});
+}
+
+async function loadSheetData(){
   var url=localStorage.getItem('psx_script_url');
-  if(url)document.getElementById('scriptUrl').value=url;
-  updateBadge();
-  initLock();
-});
+  if(!url){alert('Connect your Sheet first in ⚙️ Settings.');return;}
+  var btn=document.getElementById('syncBtn');
+  btn.textContent='⟳ Syncing…';btn.disabled=true;
+  try{
+    var res=await fetch(url+'?action=getAll');
+    var json=await res.json();
+    if(json.status==='ok'&&json.data&&json.data.length){
+      sheetData=json.data;
+      document.getElementById('dbSrc').textContent='Synced from Google Sheet · '+sheetData.length+' trades';
+    } else {
+      document.getElementById('dbSrc').textContent='Sheet returned no data — showing local history';
+    }
+  }catch(e){document.getElementById('dbSrc').textContent='Sync failed — showing local history';}
+  btn.textContent='⟳ Sync from Sheet';btn.disabled=false;
+  renderDashboard();
+}
 
-// ══ PASSWORD LOCK ══════════════════════════════════════
-// Default password hash — change via the UI, never stored in plain text
-var DEFAULT_HASH='b3ce69cf3861a914109a9e326b6b5c3e3f6d6e1a15c2e2b2d1e7f3a8c4d9b2e1'; // = "psx2025"
+function destroyChart(id){if(dbCharts[id]){dbCharts[id].destroy();delete dbCharts[id];}}
 
+function renderDashboard(){
+  var trades=getDbTrades();
+  var el=document.getElementById('dbContent');
+  if(!trades||!trades.length){
+    el.innerHTML='<div class="db-empty">No trades in the selected period.<br>Save trades from the Calculator tab first, or click <strong>Sync from Sheet</strong>.</div>';
+    return;
+  }
+
+  var n=trades.length;
+  var tBuy=trades.reduce((s,t)=>s+(+t.totalBuyCost||0),0);
+  var tSell=trades.reduce((s,t)=>s+(+t.grossSell||0),0);
+  var tCGT=trades.reduce((s,t)=>s+(+t.cgtFiler||0),0);
+  var tBrok=trades.reduce((s,t)=>s+(+t.brokerageBuy||0)+(+t.brokerageSell||0),0);
+  var tLev=trades.reduce((s,t)=>s+(+t.leviesBuy||0)+(+t.leviesSell||0),0);
+  var tProfit=trades.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
+  var wins=trades.filter(t=>(+t.netProfitFiler||0)>0).length;
+  var losses=trades.filter(t=>(+t.netProfitFiler||0)<0).length;
+  var be=n-wins-losses;
+  var winRate=n>0?Math.round(wins/n*100):0;
+  var avgRet=r2(trades.reduce((s,t)=>s+(+t.returnFiler||0),0)/n);
+  var bestT=trades.reduce((a,b)=>(+b.netProfitFiler||0)>(+a.netProfitFiler||0)?b:a,trades[0]);
+  var worstT=trades.reduce((a,b)=>(+b.netProfitFiler||0)<(+a.netProfitFiler||0)?b:a,trades[0]);
+  var pCls=tProfit>=0?'kpi-gr':'kpi-rd';
+
+  // Monthly
+  var mMap={};
+  trades.forEach(t=>{
+    var d=new Date(t.date);if(isNaN(d))return;
+    var key=d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0');
+    var label=d.toLocaleString('en-PK',{month:'short',year:'2-digit'});
+    if(!mMap[key])mMap[key]={label,profit:0,cgt:0,inv:0,count:0};
+    mMap[key].profit+=+t.netProfitFiler||0;
+    mMap[key].cgt+=+t.cgtFiler||0;
+    mMap[key].inv+=+t.totalBuyCost||0;
+    mMap[key].count++;
+  });
+  var mKeys=Object.keys(mMap).sort();
+  var mLabels=mKeys.map(k=>mMap[k].label);
+  var mProfit=mKeys.map(k=>r2(mMap[k].profit));
+  var mCGT=mKeys.map(k=>r2(mMap[k].cgt));
+  var mInv=mKeys.map(k=>r2(mMap[k].inv));
+
+  // Per symbol
+  var symMap={};
+  trades.forEach(t=>{
+    var s=t.symbol||'—';
+    if(!symMap[s])symMap[s]={s,n:0,profit:0,inv:0,cgt:0};
+    symMap[s].n++;symMap[s].profit+=+t.netProfitFiler||0;
+    symMap[s].inv+=+t.totalBuyCost||0;symMap[s].cgt+=+t.cgtFiler||0;
+  });
+  var symArr=Object.values(symMap).sort((a,b)=>b.profit-a.profit);
+  var maxAbs=Math.max(...symArr.map(s=>Math.abs(s.profit)),1);
+
+  // Cumulative
+  var sorted=[...trades].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  var cumL=[],cumV=[],cum=0;
+  sorted.forEach((t,i)=>{
+    cum=r2(cum+(+t.netProfitFiler||0));
+    var d=new Date(t.date);
+    cumL.push(isNaN(d)?'T'+(i+1):d.toLocaleDateString('en-PK',{day:'2-digit',month:'short'}));
+    cumV.push(cum);
+  });
+
+  // Portfolio — open positions (buys without matching sells by symbol — simplified)
+  var portMap={};
+  trades.forEach(t=>{
+    var s=t.symbol||'—';
+    if(!portMap[s])portMap[s]={s,qty:0,cost:0,trades:0};
+    portMap[s].trades++;
+  });
+
+  // Symbol table rows
+  var symRows=symArr.map(s=>{
+    var pc=s.profit>0?'ps':s.profit<0?'ng':'nm';
+    var ret=s.inv>0?r2(s.profit/s.inv*100):0;
+    var bw=Math.round(Math.abs(s.profit)/maxAbs*70);
+    var bc=s.profit>=0?'pos':'neg';
+    return '<tr>'+
+      '<td><span class="sym-chip">'+s.s+'</span></td>'+
+      '<td class="nm" style="text-align:center">'+s.n+'</td>'+
+      '<td class="nm">'+fmtK(s.inv)+'</td>'+
+      '<td class="'+pc+'">'+fmtS(r2(s.profit))+'</td>'+
+      '<td class="'+pc+'">'+(ret>=0?'+':'')+ret.toFixed(2)+'%</td>'+
+      '<td class="nm">'+fmtK(s.cgt)+'</td>'+
+      '<td><div class="bar-cell"><div class="mini-bar '+bc+'" style="width:'+bw+'px"></div></div></td>'+
+      '</tr>';
+  }).join('');
+
+  el.innerHTML=
+    // KPI row 1 — overview
+    '<div class="kpi-row">'+
+      '<div class="kpi kpi-ac"><div class="kpi-lbl">Total trades</div><div class="kpi-val">'+n+'</div><div class="kpi-sub">Win rate: '+winRate+'%</div></div>'+
+      '<div class="kpi"><div class="kpi-lbl">Capital deployed</div><div class="kpi-val">'+fmtK(tBuy)+'</div><div class="kpi-sub">Total buy cost</div></div>'+
+      '<div class="kpi kpi-am"><div class="kpi-lbl">Total taxes &amp; fees</div><div class="kpi-val">'+fmtK(tCGT+tBrok+tLev)+'</div><div class="kpi-sub">CGT '+fmtK(tCGT)+' · Fees '+fmtK(tBrok+tLev)+'</div></div>'+
+      '<div class="kpi '+pCls+'"><div class="kpi-lbl">Net profit (filer)</div><div class="kpi-val">'+(tProfit>=0?'+':'')+fmtK(tProfit)+'</div><div class="kpi-sub">Avg return: '+(avgRet>=0?'+':'')+avgRet+'%</div></div>'+
+    '</div>'+
+
+    // KPI row 2 — best / worst / cgt only / avg trade
+    '<div class="kpi-row" style="margin-bottom:1.5rem">'+
+      '<div class="kpi kpi-gr"><div class="kpi-lbl">Best trade</div><div class="kpi-val">'+fmtK(+bestT.netProfitFiler||0)+'</div><div class="kpi-sub"><span class="sym-chip">'+(bestT.symbol||'—')+'</span> '+bestT.date+'</div></div>'+
+      '<div class="kpi kpi-rd"><div class="kpi-lbl">Worst trade</div><div class="kpi-val">'+fmtK(+worstT.netProfitFiler||0)+'</div><div class="kpi-sub"><span class="sym-chip">'+(worstT.symbol||'—')+'</span> '+worstT.date+'</div></div>'+
+      '<div class="kpi"><div class="kpi-lbl">CGT paid (filer)</div><div class="kpi-val">'+fmtK(tCGT)+'</div><div class="kpi-sub">'+fmtK(tCGT/n)+' avg per trade</div></div>'+
+      '<div class="kpi"><div class="kpi-lbl">Breakeven trades</div><div class="kpi-val">'+be+'</div><div class="kpi-sub">Wins: '+wins+' · Losses: '+losses+'</div></div>'+
+    '</div>'+
+
+    // Charts row 1 — monthly profit + win rate
+    '<div class="chart-row">'+
+      '<div class="cc"><div class="cc-title">Monthly net profit</div><div class="cc-sub">PKR profit/loss after all charges (filer)</div><div class="cc-body" style="height:220px"><canvas id="cMP"></canvas></div></div>'+
+      '<div class="cc"><div class="cc-title">Win rate</div><div class="cc-sub">Profitable vs losing vs breakeven trades</div><div class="ring-wrap"><canvas id="cWR" style="max-width:150px;max-height:150px"></canvas><div class="ring-leg"><div class="ring-item"><div class="ring-dot" style="background:var(--gr)"></div>Profit ('+wins+')</div><div class="ring-item"><div class="ring-dot" style="background:var(--rd)"></div>Loss ('+losses+')</div><div class="ring-item"><div class="ring-dot" style="background:var(--am)"></div>Breakeven ('+be+')</div></div></div></div>'+
+    '</div>'+
+
+    // Charts row 2 — CGT + invested
+    '<div class="chart-row">'+
+      '<div class="cc"><div class="cc-title">CGT paid per month</div><div class="cc-sub">Tax deducted by NCCPL at settlement</div><div class="cc-body" style="height:200px"><canvas id="cCGT"></canvas></div></div>'+
+      '<div class="cc"><div class="cc-title">Capital deployed per month</div><div class="cc-sub">Total buy cost invested each month</div><div class="cc-body" style="height:200px"><canvas id="cINV"></canvas></div></div>'+
+    '</div>'+
+
+    // Stock performance table
+    '<div class="cc" style="margin-bottom:1.25rem">'+
+      '<div class="cc-title">Stock performance</div>'+
+      '<div class="cc-sub">All trades grouped by symbol · sorted by net profit</div>'+
+      '<div class="stk-wrap" style="margin-top:.75rem"><table class="stk"><thead><tr><th>Symbol</th><th style="text-align:center">Trades</th><th style="text-align:right">Invested</th><th style="text-align:right">Net profit</th><th style="text-align:right">Return</th><th style="text-align:right">CGT paid</th><th>Bar</th></tr></thead><tbody>'+symRows+'</tbody></table></div>'+
+    '</div>'+
+
+    // Cumulative profit line
+    '<div class="cc" style="margin-bottom:1.25rem">'+
+      '<div class="cc-title">Cumulative profit curve</div>'+
+      '<div class="cc-sub">Running total of net profit (filer) — shows your wealth trajectory</div>'+
+      '<div class="cc-body" style="height:220px"><canvas id="cCUM"></canvas></div>'+
+    '</div>'+
+
+    // Monthly summary table
+    '<div class="cc">'+
+      '<div class="cc-title">Monthly summary</div>'+
+      '<div class="cc-sub">Month-by-month breakdown</div>'+
+      '<div class="stk-wrap" style="margin-top:.75rem"><table class="stk"><thead><tr><th>Month</th><th style="text-align:center">Trades</th><th style="text-align:right">Invested</th><th style="text-align:right">Net profit</th><th style="text-align:right">CGT paid</th></tr></thead><tbody>'+
+      mKeys.map((k,i)=>{
+        var m=mMap[k];var pc=m.profit>=0?'ps':'ng';
+        return '<tr><td style="font-weight:500;color:var(--tx)">'+m.label+'</td><td class="nm" style="text-align:center">'+m.count+'</td><td class="nm">'+fmtK(m.inv)+'</td><td class="'+pc+'">'+fmtS(r2(m.profit))+'</td><td class="nm">'+fmtK(r2(m.cgt))+'</td></tr>';
+      }).join('')+
+      '</tbody><tfoot><tr style="border-top:2px solid var(--bd)"><td style="font-weight:600;color:var(--tx)">Total</td><td class="nm" style="text-align:center;font-weight:600">'+n+'</td><td class="nm" style="font-weight:600">'+fmtK(tBuy)+'</td><td class="'+(tProfit>=0?'ps':'ng')+'" style="font-weight:600">'+fmtS(r2(tProfit))+'</td><td class="nm" style="font-weight:600">'+fmtK(tCGT)+'</td></tr></tfoot>'+
+      '</table></div>'+
+    '</div>';
+
+  requestAnimationFrame(()=>drawCharts(mLabels,mProfit,mCGT,mInv,wins,losses,be,cumL,cumV));
+}
+
+function drawCharts(mL,mP,mC,mI,wins,losses,be,cumL,cumV){
+  var gc='rgba(46,51,80,.5)',tc='#7b82a0';
+  var base={
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1d27',borderColor:'#2e3350',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#7b82a0',padding:10}},
+    scales:{x:{ticks:{color:tc,font:{size:11}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:11},callback:v=>Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':v},grid:{color:gc}}}
+  };
+
+  // Monthly profit bar
+  destroyChart('mp');
+  var c1=document.getElementById('cMP');
+  if(c1)dbCharts['mp']=new Chart(c1,{type:'bar',data:{labels:mL,datasets:[{data:mP,backgroundColor:mP.map(v=>v>=0?'rgba(34,197,94,.75)':'rgba(239,68,68,.75)'),borderColor:mP.map(v=>v>=0?'#22c55e':'#ef4444'),borderWidth:1,borderRadius:4}]},options:{...base}});
+
+  // Win rate donut
+  destroyChart('wr');
+  var c2=document.getElementById('cWR');
+  if(c2)dbCharts['wr']=new Chart(c2,{type:'doughnut',data:{labels:['Profit','Loss','Breakeven'],datasets:[{data:[wins,losses,be],backgroundColor:['rgba(34,197,94,.8)','rgba(239,68,68,.8)','rgba(245,158,11,.8)'],borderColor:['#22c55e','#ef4444','#f59e0b'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:true,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1d27',borderColor:'#2e3350',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#7b82a0',padding:10}}}});
+
+  // CGT bar
+  destroyChart('cg');
+  var c3=document.getElementById('cCGT');
+  if(c3)dbCharts['cg']=new Chart(c3,{type:'bar',data:{labels:mL,datasets:[{data:mC,backgroundColor:'rgba(245,158,11,.75)',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},options:{...base}});
+
+  // Invested bar
+  destroyChart('iv');
+  var c4=document.getElementById('cINV');
+  if(c4)dbCharts['iv']=new Chart(c4,{type:'bar',data:{labels:mL,datasets:[{data:mI,backgroundColor:'rgba(59,130,246,.75)',borderColor:'#3b82f6',borderWidth:1,borderRadius:4}]},options:{...base}});
+
+  // Cumulative line
+  destroyChart('cu');
+  var c5=document.getElementById('cCUM');
+  var last=cumV[cumV.length-1]||0;
+  var lc=last>=0?'#22c55e':'#ef4444',fc=last>=0?'rgba(34,197,94,.08)':'rgba(239,68,68,.08)';
+  if(c5)dbCharts['cu']=new Chart(c5,{type:'line',data:{labels:cumL,datasets:[{data:cumV,borderColor:lc,backgroundColor:fc,borderWidth:2,pointRadius:3,pointBackgroundColor:lc,fill:true,tension:.35}]},options:{...base}});
+}
+
+// ── PASSWORD LOCK
 function hashPw(pw){
-  // Simple deterministic hash (SHA-256 via SubtleCrypto is async; use sync djb2 + salt for localStorage)
-  var salt='psx_shahzad_2025';
-  var s=salt+pw;
-  var h=5381;
+  var salt='psx_shahzad_2025',s=salt+pw,h=5381;
   for(var i=0;i<s.length;i++){h=((h<<5)+h)^s.charCodeAt(i);h=h>>>0;}
   return h.toString(16).padStart(8,'0');
 }
-
-function getStoredHash(){
-  return localStorage.getItem('psx_pw_hash') || hashPw('psx2025');
-}
-
+function getStoredHash(){return localStorage.getItem('psx_pw_hash')||hashPw('psx2025');}
 function initLock(){
-  // If already unlocked this session, skip
-  if(sessionStorage.getItem('psx_unlocked')==='1'){
-    document.getElementById('lockScreen').classList.add('hidden');
-    return;
-  }
+  if(sessionStorage.getItem('psx_unlocked')==='1'){document.getElementById('lockScreen').classList.add('hidden');return;}
   document.getElementById('pwInput').focus();
 }
-
 function unlock(){
-  var pw=document.getElementById('pwInput').value;
-  var err=document.getElementById('lockErr');
+  var pw=document.getElementById('pwInput').value,err=document.getElementById('lockErr');
   if(!pw){err.textContent='Please enter your password.';return;}
   if(hashPw(pw)===getStoredHash()){
     sessionStorage.setItem('psx_unlocked','1');
@@ -753,258 +941,31 @@ function unlock(){
   } else {
     err.textContent='Incorrect password. Try again.';
     var inp=document.getElementById('pwInput');
-    inp.classList.add('err');
-    inp.value='';
-    inp.focus();
+    inp.classList.add('err');inp.value='';inp.focus();
     setTimeout(()=>inp.classList.remove('err'),400);
   }
 }
-
 function togglePwVis(){
   var inp=document.getElementById('pwInput');
   inp.type=inp.type==='password'?'text':'password';
   document.getElementById('eyeBtn').textContent=inp.type==='password'?'👁':'🙈';
 }
-
-function openChangePw(){
-  document.getElementById('changePwModal').classList.add('open');
-  document.getElementById('curPw').focus();
-  document.getElementById('modalErr').textContent='';
-  ['curPw','newPw','conPw'].forEach(id=>document.getElementById(id).value='');
-}
-
-function closeChangePw(){
-  document.getElementById('changePwModal').classList.remove('open');
-}
-
+function openChangePw(){document.getElementById('changePwModal').classList.add('open');document.getElementById('curPw').focus();document.getElementById('modalErr').textContent='';['curPw','newPw','conPw'].forEach(id=>document.getElementById(id).value='');}
+function closeChangePw(){document.getElementById('changePwModal').classList.remove('open');}
 function savePw(){
-  var cur=document.getElementById('curPw').value;
-  var nw=document.getElementById('newPw').value;
-  var cn=document.getElementById('conPw').value;
+  var cur=document.getElementById('curPw').value,nw=document.getElementById('newPw').value,cn=document.getElementById('conPw').value;
   var err=document.getElementById('modalErr');
-  if(hashPw(cur)!==getStoredHash()){err.textContent='Current password is incorrect.';return;}
-  if(nw.length<6){err.textContent='New password must be at least 6 characters.';return;}
-  if(nw!==cn){err.textContent='New passwords do not match.';return;}
-  localStorage.setItem('psx_pw_hash',hashPw(nw));
-  closeChangePw();
-  alert('✓ Password changed successfully!');
-}
-// ══ DASHBOARD ══════════════════════════════════════════
-var dbCharts={};
-var sheetData=null;
-
-function getDbTrades(){
-  var src=sheetData||log;
-  var period=document.getElementById('dbPeriod')?document.getElementById('dbPeriod').value:'all';
-  if(period==='all')return src;
-  var now=new Date(),cutoff=new Date();
-  if(period==='month'){cutoff=new Date(now.getFullYear(),now.getMonth(),1);}
-  else if(period==='3m'){cutoff=new Date(now);cutoff.setMonth(cutoff.getMonth()-3);}
-  else if(period==='6m'){cutoff=new Date(now);cutoff.setMonth(cutoff.getMonth()-6);}
-  else if(period==='year'){cutoff=new Date(now.getFullYear(),0,1);}
-  return src.filter(t=>{
-    var d=new Date(t.date);return !isNaN(d.getTime())&&d>=cutoff;
-  });
+  if(hashPw(cur)!==getStoredHash()){err.textContent='Current password incorrect.';return;}
+  if(nw.length<6){err.textContent='New password min 6 characters.';return;}
+  if(nw!==cn){err.textContent='Passwords do not match.';return;}
+  localStorage.setItem('psx_pw_hash',hashPw(nw));closeChangePw();alert('✓ Password changed!');
 }
 
-async function loadSheetData(){
+window.addEventListener('load',()=>{
   var url=localStorage.getItem('psx_script_url');
-  if(!url){alert('Connect your Google Sheet first in the ⚙️ Sheet Setup tab.');return;}
-  var btn=document.querySelector('.db-refresh');
-  btn.textContent='⟳ Syncing…';btn.disabled=true;
-  try{
-    var res=await fetch(url+'?action=getAll');
-    var json=await res.json();
-    if(json.status==='ok'&&json.data&&json.data.length){
-      sheetData=json.data;
-      document.getElementById('dbDataSource').textContent='Synced from Google Sheet · '+sheetData.length+' trades';
-      renderDashboard();
-    } else {
-      // fallback: use local data
-      document.getElementById('dbDataSource').textContent='Using local data (Sheet returned no rows)';
-      renderDashboard();
-    }
-  } catch(e){
-    document.getElementById('dbDataSource').textContent='Sheet sync failed — showing local data';
-    renderDashboard();
-  }
-  btn.textContent='⟳ Sync from Sheet';btn.disabled=false;
-}
-
-function renderDashboard(){
-  var trades=getDbTrades();
-  var el=document.getElementById('dbContent');
-  if(!trades||!trades.length){
-    el.innerHTML='<div class="db-empty">No trades in the selected period.<br>Save some trades from the Calculator tab first.</div>';
-    return;
-  }
-
-  // ── AGGREGATE ──
-  var totalTrades=trades.length;
-  var totalBuyCost=trades.reduce((s,t)=>s+(+t.totalBuyCost||0),0);
-  var totalSellGross=trades.reduce((s,t)=>s+(+t.grossSell||0),0);
-  var totalCGT=trades.reduce((s,t)=>s+(+t.cgtFiler||0),0);
-  var totalBrokerage=trades.reduce((s,t)=>s+(+(+t.brokerageBuy||0)+(+t.brokerageSell||0)),0);
-  var totalLevies=trades.reduce((s,t)=>s+(+(+t.leviesBuy||0)+(+t.leviesSell||0)),0);
-  var totalNetProfit=trades.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
-  var profitTrades=trades.filter(t=>(+t.netProfitFiler||0)>0).length;
-  var lossTrades=trades.filter(t=>(+t.netProfitFiler||0)<0).length;
-  var winRate=totalTrades>0?Math.round(profitTrades/totalTrades*100):0;
-  var avgReturn=trades.reduce((s,t)=>s+(+t.returnFiler||0),0)/totalTrades;
-  var bestTrade=trades.reduce((a,b)=>(+b.netProfitFiler||0)>(+a.netProfitFiler||0)?b:a,trades[0]);
-  var worstTrade=trades.reduce((a,b)=>(+b.netProfitFiler||0)<(+a.netProfitFiler||0)?b:a,trades[0]);
-  var profClass=totalNetProfit>=0?'kpi-gr':'kpi-rd';
-
-  // ── KPI CARDS ──
-  var kpiHtml=
-    '<div class="kpi kpi-ac"><div class="kpi-label">Total trades</div><div class="kpi-val">'+totalTrades+'</div><div class="kpi-sub">Win rate: '+winRate+'%</div></div>'+
-    '<div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-val">'+fmtK(totalBuyCost)+'</div><div class="kpi-sub">Gross buy cost</div></div>'+
-    '<div class="kpi"><div class="kpi-label">Total CGT paid</div><div class="kpi-val">'+fmtK(totalCGT)+'</div><div class="kpi-sub">Filer rate · '+fmtK(totalBrokerage+totalLevies)+' fees</div></div>'+
-    '<div class="kpi '+profClass+'"><div class="kpi-label">Net profit (filer)</div><div class="kpi-val">'+(totalNetProfit>=0?'+':'')+fmtK(totalNetProfit)+'</div><div class="kpi-sub">Avg return: '+(avgReturn>=0?'+':'')+avgReturn.toFixed(2)+'%</div></div>';
-
-  // ── MONTHLY PROFIT DATA ──
-  var monthMap={};
-  trades.forEach(t=>{
-    var d=new Date(t.date);
-    if(isNaN(d.getTime()))return;
-    var key=d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0');
-    var label=d.toLocaleString('en-PK',{month:'short',year:'2-digit'});
-    if(!monthMap[key])monthMap[key]={label,profit:0,cgt:0,invested:0};
-    monthMap[key].profit+=+t.netProfitFiler||0;
-    monthMap[key].cgt+=+t.cgtFiler||0;
-    monthMap[key].invested+=+t.totalBuyCost||0;
-  });
-  var months=Object.keys(monthMap).sort();
-  var mLabels=months.map(k=>monthMap[k].label);
-  var mProfit=months.map(k=>r2(monthMap[k].profit));
-  var mCgt=months.map(k=>r2(monthMap[k].cgt));
-  var mInv=months.map(k=>r2(monthMap[k].invested));
-
-  // ── PER SYMBOL DATA ──
-  var symMap={};
-  trades.forEach(t=>{
-    var s=t.symbol||'—';
-    if(!symMap[s])symMap[s]={symbol:s,trades:0,profit:0,invested:0,cgt:0};
-    symMap[s].trades++;
-    symMap[s].profit+=+t.netProfitFiler||0;
-    symMap[s].invested+=+t.totalBuyCost||0;
-    symMap[s].cgt+=+t.cgtFiler||0;
-  });
-  var symArr=Object.values(symMap).sort((a,b)=>b.profit-a.profit);
-  var maxAbsProfit=Math.max(...symArr.map(s=>Math.abs(s.profit)),1);
-
-  // ── SYMBOL TABLE ──
-  var symRows=symArr.map(s=>{
-    var pc=s.profit>0?'ps':s.profit<0?'ng':'nm';
-    var ret=s.invested>0?r2(s.profit/s.invested*100):0;
-    var barW=Math.round(Math.abs(s.profit)/maxAbsProfit*80);
-    var barCls=s.profit>=0?'pos':'neg';
-    return '<tr>'+
-      '<td><span class="sym-chip">'+s.symbol+'</span></td>'+
-      '<td class="nm" style="text-align:center">'+s.trades+'</td>'+
-      '<td class="nm">'+fmtK(s.invested)+'</td>'+
-      '<td class="'+pc+'">'+fmtS(r2(s.profit))+'</td>'+
-      '<td class="'+pc+'">'+(ret>=0?'+':'')+ret.toFixed(2)+'%</td>'+
-      '<td><div class="mini-bar-wrap"><div class="mini-bar '+barCls+'" style="width:'+barW+'px"></div></div></td>'+
-      '</tr>';
-  }).join('');
-
-  // best/worst
-  var bestSym=bestTrade.symbol||'—';var worstSym=worstTrade.symbol||'—';
-
-  // ── BUILD HTML ──
-  el.innerHTML=
-    '<div class="db-kpi">'+kpiHtml+'</div>'+
-
-    // best / worst
-    '<div class="db-row" style="margin-bottom:1.5rem">'+
-      '<div class="kpi kpi-gr"><div class="kpi-label">Best trade</div><div class="kpi-val">'+fmtK(+bestTrade.netProfitFiler||0)+'</div><div class="kpi-sub"><span class="sym-chip">'+bestSym+'</span> · '+(bestTrade.date||'')+'</div></div>'+
-      '<div class="kpi kpi-rd"><div class="kpi-label">Worst trade</div><div class="kpi-val">'+fmtK(+worstTrade.netProfitFiler||0)+'</div><div class="kpi-sub"><span class="sym-chip">'+worstSym+'</span> · '+(worstTrade.date||'')+'</div></div>'+
-    '</div>'+
-
-    // Charts row 1 — monthly profit bar + win rate donut
-    '<div class="db-row">'+
-      '<div class="chart-card"><div class="chart-title">Monthly net profit (filer)</div><div class="chart-sub">PKR profit/loss per month after all charges</div><div class="chart-wrap" style="height:220px"><canvas id="chartMonthProfit"></canvas></div></div>'+
-      '<div class="chart-card"><div class="chart-title">Win rate</div><div class="chart-sub">Profitable vs losing trades</div><div class="ring-wrap" id="winRateWrap"><canvas id="chartWinRate" style="max-width:160px;max-height:160px"></canvas><div class="ring-legend"><div class="ring-legend-item"><div class="ring-dot" style="background:var(--gr)"></div>Profit ('+profitTrades+')</div><div class="ring-legend-item"><div class="ring-dot" style="background:var(--rd)"></div>Loss ('+lossTrades+')</div><div class="ring-legend-item"><div class="ring-dot" style="background:var(--am)"></div>Breakeven ('+(totalTrades-profitTrades-lossTrades)+')</div></div></div></div>'+
-    '</div>'+
-
-    // Charts row 2 — CGT trend + invested
-    '<div class="db-row">'+
-      '<div class="chart-card"><div class="chart-title">CGT paid per month</div><div class="chart-sub">Tax deducted by NCCPL at settlement (filer)</div><div class="chart-wrap" style="height:200px"><canvas id="chartCGT"></canvas></div></div>'+
-      '<div class="chart-card"><div class="chart-title">Capital deployed per month</div><div class="chart-sub">Total buy cost invested each month</div><div class="chart-wrap" style="height:200px"><canvas id="chartInvested"></canvas></div></div>'+
-    '</div>'+
-
-    // Symbol breakdown table
-    '<div class="chart-card full" style="margin-bottom:1.5rem">'+
-      '<div class="chart-title">Performance by stock</div>'+
-      '<div class="chart-sub">All trades grouped by symbol · sorted by net profit</div>'+
-      '<div style="overflow-x:auto;margin-top:.5rem"><table class="stk-table"><thead><tr><th>Symbol</th><th style="text-align:center">Trades</th><th style="text-align:right">Invested</th><th style="text-align:right">Net profit</th><th style="text-align:right">Return</th><th>Bar</th></tr></thead><tbody>'+symRows+'</tbody></table></div>'+
-    '</div>'+
-
-    // Cumulative profit line
-    '<div class="chart-card full">'+
-      '<div class="chart-title">Cumulative profit over time</div>'+
-      '<div class="chart-sub">Running total of net profit (filer) across all trades in period</div>'+
-      '<div class="chart-wrap" style="height:220px"><canvas id="chartCumulative"></canvas></div>'+
-    '</div>';
-
-  // Cumulative data
-  var sortedTrades=[...trades].sort((a,b)=>new Date(a.date)-new Date(b.date));
-  var cumLabels=[],cumVals=[],cum=0;
-  sortedTrades.forEach((t,i)=>{
-    cum=r2(cum+(+t.netProfitFiler||0));
-    var d=new Date(t.date);
-    cumLabels.push(isNaN(d)?'T'+(i+1):d.toLocaleDateString('en-PK',{day:'2-digit',month:'short'}));
-    cumVals.push(cum);
-  });
-
-  // ── DRAW CHARTS ──
-  requestAnimationFrame(()=>{
-    drawCharts(mLabels,mProfit,mCgt,mInv,profitTrades,lossTrades,totalTrades,cumLabels,cumVals);
-  });
-}
-
-function destroyChart(id){if(dbCharts[id]){dbCharts[id].destroy();delete dbCharts[id];}}
-
-function drawCharts(mLabels,mProfit,mCgt,mInv,wins,losses,total,cumLabels,cumVals){
-  var gridColor='rgba(46,51,80,.5)';
-  var tickColor='#7b82a0';
-  var baseOpts={
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1d27',borderColor:'#2e3350',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#7b82a0',padding:10}},
-    scales:{x:{ticks:{color:tickColor,font:{size:11}},grid:{color:gridColor}},y:{ticks:{color:tickColor,font:{size:11},callback:v=>v>=1000?'₨'+(v/1000).toFixed(0)+'k':v<=-1000?'₨'+(v/1000).toFixed(0)+'k':'₨'+v},grid:{color:gridColor}}}
-  };
-
-  // Monthly profit bar
-  destroyChart('mp');
-  var ctx1=document.getElementById('chartMonthProfit');
-  if(ctx1){dbCharts['mp']=new Chart(ctx1,{type:'bar',data:{labels:mLabels,datasets:[{data:mProfit,backgroundColor:mProfit.map(v=>v>=0?'rgba(34,197,94,.75)':'rgba(239,68,68,.75)'),borderColor:mProfit.map(v=>v>=0?'#22c55e':'#ef4444'),borderWidth:1,borderRadius:4}]},options:{...baseOpts,plugins:{...baseOpts.plugins,tooltip:{...baseOpts.plugins.tooltip,callbacks:{label:ctx=>'Profit: ₨'+ctx.raw.toLocaleString('en-PK',{minimumFractionDigits:2})}}}}});}
-
-  // Win rate donut
-  destroyChart('wr');
-  var ctx2=document.getElementById('chartWinRate');
-  var be=total-wins-losses;
-  if(ctx2){dbCharts['wr']=new Chart(ctx2,{type:'doughnut',data:{labels:['Profit','Loss','Breakeven'],datasets:[{data:[wins,losses,be],backgroundColor:['rgba(34,197,94,.8)','rgba(239,68,68,.8)','rgba(245,158,11,.8)'],borderColor:['#22c55e','#ef4444','#f59e0b'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:true,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1d27',borderColor:'#2e3350',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#7b82a0',padding:10,callbacks:{label:ctx=>ctx.label+': '+ctx.raw+' trades'}}}}});}
-
-  // CGT bar
-  destroyChart('cg');
-  var ctx3=document.getElementById('chartCGT');
-  if(ctx3){dbCharts['cg']=new Chart(ctx3,{type:'bar',data:{labels:mLabels,datasets:[{data:mCgt,backgroundColor:'rgba(245,158,11,.7)',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},options:{...baseOpts}});}
-
-  // Invested bar
-  destroyChart('iv');
-  var ctx4=document.getElementById('chartInvested');
-  if(ctx4){dbCharts['iv']=new Chart(ctx4,{type:'bar',data:{labels:mLabels,datasets:[{data:mInv,backgroundColor:'rgba(59,130,246,.7)',borderColor:'#3b82f6',borderWidth:1,borderRadius:4}]},options:{...baseOpts}});}
-
-  // Cumulative line
-  destroyChart('cu');
-  var ctx5=document.getElementById('chartCumulative');
-  var lastVal=cumVals[cumVals.length-1]||0;
-  var lineColor=lastVal>=0?'#22c55e':'#ef4444';
-  var fillColor=lastVal>=0?'rgba(34,197,94,.08)':'rgba(239,68,68,.08)';
-  if(ctx5){dbCharts['cu']=new Chart(ctx5,{type:'line',data:{labels:cumLabels,datasets:[{data:cumVals,borderColor:lineColor,backgroundColor:fillColor,borderWidth:2,pointRadius:3,pointBackgroundColor:lineColor,fill:true,tension:.35}]},options:{...baseOpts,plugins:{...baseOpts.plugins,tooltip:{...baseOpts.plugins.tooltip,callbacks:{label:ctx=>'Cumulative: ₨'+ctx.raw.toLocaleString('en-PK',{minimumFractionDigits:2})}}}}});}
-}
+  if(url)document.getElementById('scriptUrl').value=url;
+  updateBadge();initLock();
+});
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
+</body>
 </html>
