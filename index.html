@@ -142,7 +142,55 @@ table.ht tbody tr:hover td{background:var(--sf2)}
 .ts.er{display:inline-block;background:var(--rdd);color:var(--rd)}
 footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
 
-/* ── PASSWORD LOCK ── */
+/* ── DASHBOARD ── */
+.db-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+@media(max-width:700px){.db-kpi{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.db-kpi{grid-template-columns:1fr}}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:4px}
+.kpi.kpi-gr{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06)}
+.kpi.kpi-rd{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06)}
+.kpi.kpi-ac{border-color:rgba(0,212,170,.3);background:rgba(0,212,170,.06)}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--td)}
+.kpi-val{font-family:var(--mn);font-size:22px;font-weight:500;color:var(--tx)}
+.kpi.kpi-gr .kpi-val{color:var(--gr)}
+.kpi.kpi-rd .kpi-val{color:var(--rd)}
+.kpi.kpi-ac .kpi-val{color:var(--ac)}
+.kpi-sub{font-size:11px;color:var(--tm)}
+.db-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem}
+@media(max-width:640px){.db-row{grid-template-columns:1fr}}
+.chart-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.25rem}
+.chart-card.full{grid-column:1/-1}
+.chart-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--tm);margin-bottom:1rem}
+.chart-wrap{position:relative}
+.db-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
+.db-filter select{width:auto;font-size:12px;padding:6px 10px;font-family:var(--fn)}
+.db-filter label{font-size:12px;color:var(--tm)}
+.db-empty{text-align:center;padding:3rem 2rem;color:var(--td);font-size:13px;line-height:1.8}
+.db-refresh{background:var(--acd);color:var(--ac);border:1px solid rgba(0,212,170,.3);font-size:12px;padding:6px 14px;border-radius:var(--r);cursor:pointer;font-weight:500}
+.db-refresh:hover{opacity:.85}
+.db-loading{text-align:center;padding:2rem;color:var(--tm);font-size:13px}
+/* stock table */
+.stk-table{width:100%;border-collapse:collapse}
+.stk-table th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--td);padding:8px 12px;text-align:left;border-bottom:1px solid var(--bd)}
+.stk-table td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--bd);color:var(--tm)}
+.stk-table tr:last-child td{border-bottom:none}
+.stk-table td.nm{font-family:var(--mn);text-align:right;color:var(--tx)}
+.stk-table td.ps{font-family:var(--mn);text-align:right;color:var(--gr);font-weight:500}
+.stk-table td.ng{font-family:var(--mn);text-align:right;color:var(--rd);font-weight:500}
+.stk-table tbody tr:hover td{background:var(--sf2)}
+.sym-chip{display:inline-block;background:var(--acd);color:var(--ac);border:1px solid rgba(0,212,170,.25);border-radius:5px;font-family:var(--mn);font-size:11px;font-weight:600;padding:2px 7px}
+/* mini bar */
+.mini-bar-wrap{display:flex;align-items:center;gap:8px}
+.mini-bar{height:6px;border-radius:3px;min-width:4px;transition:width .3s}
+.mini-bar.pos{background:var(--gr)}
+.mini-bar.neg{background:var(--rd)}
+/* win rate ring */
+.ring-wrap{display:flex;align-items:center;justify-content:center;gap:2rem;padding:.5rem 0}
+.ring-legend{display:flex;flex-direction:column;gap:10px}
+.ring-legend-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tm)}
+.ring-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+</style>
 #lockScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem}
 #lockScreen.hidden{display:none}
 .lock-card{width:100%;max-width:380px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;position:relative}
@@ -248,6 +296,7 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 <main>
 <div class="tabs">
   <button class="tab active" onclick="switchTab('calc',this)">📊 Calculator</button>
+  <button class="tab" onclick="switchTab('dashboard',this)">📈 Dashboard</button>
   <button class="tab" onclick="switchTab('history',this)">📋 Trade History</button>
   <button class="tab" onclick="switchTab('settings',this)">⚙️ Sheet Setup</button>
 </div>
@@ -358,6 +407,34 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   }
 }
 function doGet(e) {
+  if (e.parameter.action === 'getAll') {
+    try {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      var rows  = sheet.getDataRange().getValues();
+      if (rows.length < 2) return ContentService.createTextOutput(JSON.stringify({status:"ok",data:[]})).setMimeType(ContentService.MimeType.JSON);
+      var headers = rows[0];
+      var keyMap  = {
+        "Date":"date","Time":"time","Symbol":"symbol","Qty":"qty",
+        "Buy Price":"buyPrice","Sell Price":"sellPrice","Holding Period":"holdingPeriod",
+        "Gross Buy":"grossBuy","Gross Sell":"grossSell",
+        "Brokerage (Buy)":"brokerageBuy","Sales Tax (Buy)":"salesTaxBuy","Levies (Buy)":"leviesBuy","Total Buy Cost":"totalBuyCost",
+        "Brokerage (Sell)":"brokerageSell","Sales Tax (Sell)":"salesTaxSell","Levies (Sell)":"leviesSell",
+        "CGT (Filer)":"cgtFiler","CGT (Non-Filer)":"cgtNonFiler",
+        "Total Sell Ded (Filer)":"totalSellDedFiler","Total Sell Ded (Non-Filer)":"totalSellDedNonFiler",
+        "Net Proceeds (Filer)":"netProceedsFiler","Net Proceeds (Non-Filer)":"netProceedsNonFiler",
+        "Net Profit (Filer)":"netProfitFiler","Net Profit (Non-Filer)":"netProfitNonFiler",
+        "Return % (Filer)":"returnFiler","Return % (Non-Filer)":"returnNonFiler"
+      };
+      var data = rows.slice(1).map(function(row){
+        var obj={};
+        headers.forEach(function(h,i){ obj[keyMap[h]||h]=row[i]; });
+        return obj;
+      });
+      return ContentService.createTextOutput(JSON.stringify({status:"ok",data:data})).setMimeType(ContentService.MimeType.JSON);
+    } catch(err) {
+      return ContentService.createTextOutput(JSON.stringify({status:"error",message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
   return ContentService.createTextOutput(JSON.stringify({status:"ok",message:"PSX Calculator connected"})).setMimeType(ContentService.MimeType.JSON);
 }</div>
     <button class="btn btn-st" onclick="copyScript()" style="margin-bottom:1rem">📋 Copy script</button>
@@ -383,7 +460,34 @@ Net Profit Filer · Net Profit Non-Filer
 Return % Filer · Return % Non-Filer</div>
     <p>Headers are added automatically on first save. Add a SUM row at the bottom of your Sheet for instant monthly totals.</p>
   </div>
+<!-- DASHBOARD -->
+<div class="tp" id="tab-dashboard">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem">
+    <div>
+      <div class="sl" style="margin-bottom:2px">Analytics dashboard</div>
+      <div style="font-size:12px;color:var(--tm)" id="dbDataSource">Showing local trade history</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <div class="db-filter" style="margin:0">
+        <label>Period</label>
+        <select id="dbPeriod" onchange="renderDashboard()">
+          <option value="all">All time</option>
+          <option value="month">This month</option>
+          <option value="3m">Last 3 months</option>
+          <option value="6m">Last 6 months</option>
+          <option value="year">This year</option>
+        </select>
+      </div>
+      <button class="db-refresh" onclick="loadSheetData()">⟳ Sync from Sheet</button>
+    </div>
+  </div>
+
+  <div id="dbContent">
+    <div class="db-empty">No trade data yet.<br>Save some trades from the Calculator tab, or click <strong>Sync from Sheet</strong> to load from Google Sheets.</div>
+  </div>
 </div>
+
 </main>
 
 <footer>PSX Trade Calculator · FY 2025–26 · CGT deducted by NCCPL at settlement · Always verify against your broker's trade confirmation slip</footer>
@@ -397,6 +501,7 @@ function switchTab(name,el){
   document.getElementById('tab-'+name).classList.add('active');
   el.classList.add('active');
   if(name==='history')renderHist();
+  if(name==='dashboard')renderDashboard();
 }
 
 document.querySelectorAll('#holding .tb').forEach(b=>{
@@ -684,6 +789,222 @@ function savePw(){
   closeChangePw();
   alert('✓ Password changed successfully!');
 }
+// ══ DASHBOARD ══════════════════════════════════════════
+var dbCharts={};
+var sheetData=null;
+
+function getDbTrades(){
+  var src=sheetData||log;
+  var period=document.getElementById('dbPeriod')?document.getElementById('dbPeriod').value:'all';
+  if(period==='all')return src;
+  var now=new Date(),cutoff=new Date();
+  if(period==='month'){cutoff=new Date(now.getFullYear(),now.getMonth(),1);}
+  else if(period==='3m'){cutoff=new Date(now);cutoff.setMonth(cutoff.getMonth()-3);}
+  else if(period==='6m'){cutoff=new Date(now);cutoff.setMonth(cutoff.getMonth()-6);}
+  else if(period==='year'){cutoff=new Date(now.getFullYear(),0,1);}
+  return src.filter(t=>{
+    var d=new Date(t.date);return !isNaN(d.getTime())&&d>=cutoff;
+  });
+}
+
+async function loadSheetData(){
+  var url=localStorage.getItem('psx_script_url');
+  if(!url){alert('Connect your Google Sheet first in the ⚙️ Sheet Setup tab.');return;}
+  var btn=document.querySelector('.db-refresh');
+  btn.textContent='⟳ Syncing…';btn.disabled=true;
+  try{
+    var res=await fetch(url+'?action=getAll');
+    var json=await res.json();
+    if(json.status==='ok'&&json.data&&json.data.length){
+      sheetData=json.data;
+      document.getElementById('dbDataSource').textContent='Synced from Google Sheet · '+sheetData.length+' trades';
+      renderDashboard();
+    } else {
+      // fallback: use local data
+      document.getElementById('dbDataSource').textContent='Using local data (Sheet returned no rows)';
+      renderDashboard();
+    }
+  } catch(e){
+    document.getElementById('dbDataSource').textContent='Sheet sync failed — showing local data';
+    renderDashboard();
+  }
+  btn.textContent='⟳ Sync from Sheet';btn.disabled=false;
+}
+
+function renderDashboard(){
+  var trades=getDbTrades();
+  var el=document.getElementById('dbContent');
+  if(!trades||!trades.length){
+    el.innerHTML='<div class="db-empty">No trades in the selected period.<br>Save some trades from the Calculator tab first.</div>';
+    return;
+  }
+
+  // ── AGGREGATE ──
+  var totalTrades=trades.length;
+  var totalBuyCost=trades.reduce((s,t)=>s+(+t.totalBuyCost||0),0);
+  var totalSellGross=trades.reduce((s,t)=>s+(+t.grossSell||0),0);
+  var totalCGT=trades.reduce((s,t)=>s+(+t.cgtFiler||0),0);
+  var totalBrokerage=trades.reduce((s,t)=>s+(+(+t.brokerageBuy||0)+(+t.brokerageSell||0)),0);
+  var totalLevies=trades.reduce((s,t)=>s+(+(+t.leviesBuy||0)+(+t.leviesSell||0)),0);
+  var totalNetProfit=trades.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
+  var profitTrades=trades.filter(t=>(+t.netProfitFiler||0)>0).length;
+  var lossTrades=trades.filter(t=>(+t.netProfitFiler||0)<0).length;
+  var winRate=totalTrades>0?Math.round(profitTrades/totalTrades*100):0;
+  var avgReturn=trades.reduce((s,t)=>s+(+t.returnFiler||0),0)/totalTrades;
+  var bestTrade=trades.reduce((a,b)=>(+b.netProfitFiler||0)>(+a.netProfitFiler||0)?b:a,trades[0]);
+  var worstTrade=trades.reduce((a,b)=>(+b.netProfitFiler||0)<(+a.netProfitFiler||0)?b:a,trades[0]);
+  var profClass=totalNetProfit>=0?'kpi-gr':'kpi-rd';
+
+  // ── KPI CARDS ──
+  var kpiHtml=
+    '<div class="kpi kpi-ac"><div class="kpi-label">Total trades</div><div class="kpi-val">'+totalTrades+'</div><div class="kpi-sub">Win rate: '+winRate+'%</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Total invested</div><div class="kpi-val">'+fmtK(totalBuyCost)+'</div><div class="kpi-sub">Gross buy cost</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Total CGT paid</div><div class="kpi-val">'+fmtK(totalCGT)+'</div><div class="kpi-sub">Filer rate · '+fmtK(totalBrokerage+totalLevies)+' fees</div></div>'+
+    '<div class="kpi '+profClass+'"><div class="kpi-label">Net profit (filer)</div><div class="kpi-val">'+(totalNetProfit>=0?'+':'')+fmtK(totalNetProfit)+'</div><div class="kpi-sub">Avg return: '+(avgReturn>=0?'+':'')+avgReturn.toFixed(2)+'%</div></div>';
+
+  // ── MONTHLY PROFIT DATA ──
+  var monthMap={};
+  trades.forEach(t=>{
+    var d=new Date(t.date);
+    if(isNaN(d.getTime()))return;
+    var key=d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0');
+    var label=d.toLocaleString('en-PK',{month:'short',year:'2-digit'});
+    if(!monthMap[key])monthMap[key]={label,profit:0,cgt:0,invested:0};
+    monthMap[key].profit+=+t.netProfitFiler||0;
+    monthMap[key].cgt+=+t.cgtFiler||0;
+    monthMap[key].invested+=+t.totalBuyCost||0;
+  });
+  var months=Object.keys(monthMap).sort();
+  var mLabels=months.map(k=>monthMap[k].label);
+  var mProfit=months.map(k=>r2(monthMap[k].profit));
+  var mCgt=months.map(k=>r2(monthMap[k].cgt));
+  var mInv=months.map(k=>r2(monthMap[k].invested));
+
+  // ── PER SYMBOL DATA ──
+  var symMap={};
+  trades.forEach(t=>{
+    var s=t.symbol||'—';
+    if(!symMap[s])symMap[s]={symbol:s,trades:0,profit:0,invested:0,cgt:0};
+    symMap[s].trades++;
+    symMap[s].profit+=+t.netProfitFiler||0;
+    symMap[s].invested+=+t.totalBuyCost||0;
+    symMap[s].cgt+=+t.cgtFiler||0;
+  });
+  var symArr=Object.values(symMap).sort((a,b)=>b.profit-a.profit);
+  var maxAbsProfit=Math.max(...symArr.map(s=>Math.abs(s.profit)),1);
+
+  // ── SYMBOL TABLE ──
+  var symRows=symArr.map(s=>{
+    var pc=s.profit>0?'ps':s.profit<0?'ng':'nm';
+    var ret=s.invested>0?r2(s.profit/s.invested*100):0;
+    var barW=Math.round(Math.abs(s.profit)/maxAbsProfit*80);
+    var barCls=s.profit>=0?'pos':'neg';
+    return '<tr>'+
+      '<td><span class="sym-chip">'+s.symbol+'</span></td>'+
+      '<td class="nm" style="text-align:center">'+s.trades+'</td>'+
+      '<td class="nm">'+fmtK(s.invested)+'</td>'+
+      '<td class="'+pc+'">'+fmtS(r2(s.profit))+'</td>'+
+      '<td class="'+pc+'">'+(ret>=0?'+':'')+ret.toFixed(2)+'%</td>'+
+      '<td><div class="mini-bar-wrap"><div class="mini-bar '+barCls+'" style="width:'+barW+'px"></div></div></td>'+
+      '</tr>';
+  }).join('');
+
+  // best/worst
+  var bestSym=bestTrade.symbol||'—';var worstSym=worstTrade.symbol||'—';
+
+  // ── BUILD HTML ──
+  el.innerHTML=
+    '<div class="db-kpi">'+kpiHtml+'</div>'+
+
+    // best / worst
+    '<div class="db-row" style="margin-bottom:1.5rem">'+
+      '<div class="kpi kpi-gr"><div class="kpi-label">Best trade</div><div class="kpi-val">'+fmtK(+bestTrade.netProfitFiler||0)+'</div><div class="kpi-sub"><span class="sym-chip">'+bestSym+'</span> · '+(bestTrade.date||'')+'</div></div>'+
+      '<div class="kpi kpi-rd"><div class="kpi-label">Worst trade</div><div class="kpi-val">'+fmtK(+worstTrade.netProfitFiler||0)+'</div><div class="kpi-sub"><span class="sym-chip">'+worstSym+'</span> · '+(worstTrade.date||'')+'</div></div>'+
+    '</div>'+
+
+    // Charts row 1 — monthly profit bar + win rate donut
+    '<div class="db-row">'+
+      '<div class="chart-card"><div class="chart-title">Monthly net profit (filer)</div><div class="chart-sub">PKR profit/loss per month after all charges</div><div class="chart-wrap" style="height:220px"><canvas id="chartMonthProfit"></canvas></div></div>'+
+      '<div class="chart-card"><div class="chart-title">Win rate</div><div class="chart-sub">Profitable vs losing trades</div><div class="ring-wrap" id="winRateWrap"><canvas id="chartWinRate" style="max-width:160px;max-height:160px"></canvas><div class="ring-legend"><div class="ring-legend-item"><div class="ring-dot" style="background:var(--gr)"></div>Profit ('+profitTrades+')</div><div class="ring-legend-item"><div class="ring-dot" style="background:var(--rd)"></div>Loss ('+lossTrades+')</div><div class="ring-legend-item"><div class="ring-dot" style="background:var(--am)"></div>Breakeven ('+(totalTrades-profitTrades-lossTrades)+')</div></div></div></div>'+
+    '</div>'+
+
+    // Charts row 2 — CGT trend + invested
+    '<div class="db-row">'+
+      '<div class="chart-card"><div class="chart-title">CGT paid per month</div><div class="chart-sub">Tax deducted by NCCPL at settlement (filer)</div><div class="chart-wrap" style="height:200px"><canvas id="chartCGT"></canvas></div></div>'+
+      '<div class="chart-card"><div class="chart-title">Capital deployed per month</div><div class="chart-sub">Total buy cost invested each month</div><div class="chart-wrap" style="height:200px"><canvas id="chartInvested"></canvas></div></div>'+
+    '</div>'+
+
+    // Symbol breakdown table
+    '<div class="chart-card full" style="margin-bottom:1.5rem">'+
+      '<div class="chart-title">Performance by stock</div>'+
+      '<div class="chart-sub">All trades grouped by symbol · sorted by net profit</div>'+
+      '<div style="overflow-x:auto;margin-top:.5rem"><table class="stk-table"><thead><tr><th>Symbol</th><th style="text-align:center">Trades</th><th style="text-align:right">Invested</th><th style="text-align:right">Net profit</th><th style="text-align:right">Return</th><th>Bar</th></tr></thead><tbody>'+symRows+'</tbody></table></div>'+
+    '</div>'+
+
+    // Cumulative profit line
+    '<div class="chart-card full">'+
+      '<div class="chart-title">Cumulative profit over time</div>'+
+      '<div class="chart-sub">Running total of net profit (filer) across all trades in period</div>'+
+      '<div class="chart-wrap" style="height:220px"><canvas id="chartCumulative"></canvas></div>'+
+    '</div>';
+
+  // Cumulative data
+  var sortedTrades=[...trades].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  var cumLabels=[],cumVals=[],cum=0;
+  sortedTrades.forEach((t,i)=>{
+    cum=r2(cum+(+t.netProfitFiler||0));
+    var d=new Date(t.date);
+    cumLabels.push(isNaN(d)?'T'+(i+1):d.toLocaleDateString('en-PK',{day:'2-digit',month:'short'}));
+    cumVals.push(cum);
+  });
+
+  // ── DRAW CHARTS ──
+  requestAnimationFrame(()=>{
+    drawCharts(mLabels,mProfit,mCgt,mInv,profitTrades,lossTrades,totalTrades,cumLabels,cumVals);
+  });
+}
+
+function destroyChart(id){if(dbCharts[id]){dbCharts[id].destroy();delete dbCharts[id];}}
+
+function drawCharts(mLabels,mProfit,mCgt,mInv,wins,losses,total,cumLabels,cumVals){
+  var gridColor='rgba(46,51,80,.5)';
+  var tickColor='#7b82a0';
+  var baseOpts={
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1d27',borderColor:'#2e3350',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#7b82a0',padding:10}},
+    scales:{x:{ticks:{color:tickColor,font:{size:11}},grid:{color:gridColor}},y:{ticks:{color:tickColor,font:{size:11},callback:v=>v>=1000?'₨'+(v/1000).toFixed(0)+'k':v<=-1000?'₨'+(v/1000).toFixed(0)+'k':'₨'+v},grid:{color:gridColor}}}
+  };
+
+  // Monthly profit bar
+  destroyChart('mp');
+  var ctx1=document.getElementById('chartMonthProfit');
+  if(ctx1){dbCharts['mp']=new Chart(ctx1,{type:'bar',data:{labels:mLabels,datasets:[{data:mProfit,backgroundColor:mProfit.map(v=>v>=0?'rgba(34,197,94,.75)':'rgba(239,68,68,.75)'),borderColor:mProfit.map(v=>v>=0?'#22c55e':'#ef4444'),borderWidth:1,borderRadius:4}]},options:{...baseOpts,plugins:{...baseOpts.plugins,tooltip:{...baseOpts.plugins.tooltip,callbacks:{label:ctx=>'Profit: ₨'+ctx.raw.toLocaleString('en-PK',{minimumFractionDigits:2})}}}}});}
+
+  // Win rate donut
+  destroyChart('wr');
+  var ctx2=document.getElementById('chartWinRate');
+  var be=total-wins-losses;
+  if(ctx2){dbCharts['wr']=new Chart(ctx2,{type:'doughnut',data:{labels:['Profit','Loss','Breakeven'],datasets:[{data:[wins,losses,be],backgroundColor:['rgba(34,197,94,.8)','rgba(239,68,68,.8)','rgba(245,158,11,.8)'],borderColor:['#22c55e','#ef4444','#f59e0b'],borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:true,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1d27',borderColor:'#2e3350',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#7b82a0',padding:10,callbacks:{label:ctx=>ctx.label+': '+ctx.raw+' trades'}}}}});}
+
+  // CGT bar
+  destroyChart('cg');
+  var ctx3=document.getElementById('chartCGT');
+  if(ctx3){dbCharts['cg']=new Chart(ctx3,{type:'bar',data:{labels:mLabels,datasets:[{data:mCgt,backgroundColor:'rgba(245,158,11,.7)',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},options:{...baseOpts}});}
+
+  // Invested bar
+  destroyChart('iv');
+  var ctx4=document.getElementById('chartInvested');
+  if(ctx4){dbCharts['iv']=new Chart(ctx4,{type:'bar',data:{labels:mLabels,datasets:[{data:mInv,backgroundColor:'rgba(59,130,246,.7)',borderColor:'#3b82f6',borderWidth:1,borderRadius:4}]},options:{...baseOpts}});}
+
+  // Cumulative line
+  destroyChart('cu');
+  var ctx5=document.getElementById('chartCumulative');
+  var lastVal=cumVals[cumVals.length-1]||0;
+  var lineColor=lastVal>=0?'#22c55e':'#ef4444';
+  var fillColor=lastVal>=0?'rgba(34,197,94,.08)':'rgba(239,68,68,.08)';
+  if(ctx5){dbCharts['cu']=new Chart(ctx5,{type:'line',data:{labels:cumLabels,datasets:[{data:cumVals,borderColor:lineColor,backgroundColor:fillColor,borderWidth:2,pointRadius:3,pointBackgroundColor:lineColor,fill:true,tension:.35}]},options:{...baseOpts,plugins:{...baseOpts.plugins,tooltip:{...baseOpts.plugins.tooltip,callbacks:{label:ctx=>'Cumulative: ₨'+ctx.raw.toLocaleString('en-PK',{minimumFractionDigits:2})}}}}});}
+}
 </script>
-</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
 </html>
