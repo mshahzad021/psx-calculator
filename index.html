@@ -4,15 +4,29 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>PSX Trade Calculator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0f1117;--sf:#1a1d27;--sf2:#22263a;--bd:#2e3350;--ac:#00d4aa;--acd:rgba(0,212,170,.12);--acd2:rgba(0,212,170,.06);--tx:#e8eaf0;--tm:#7b82a0;--td:#4a5070;--gr:#22c55e;--grd:rgba(34,197,94,.12);--rd:#ef4444;--rdd:rgba(239,68,68,.12);--am:#f59e0b;--amd:rgba(245,158,11,.12);--bl:#3b82f6;--bld:rgba(59,130,246,.12);--fn:'Inter',system-ui,sans-serif;--mn:'JetBrains Mono','Fira Code',monospace;--r:8px;--rl:12px}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0f1117;--sf:#1a1d27;--sf2:#22263a;--bd:#2e3350;
+  --ac:#00d4aa;--acd:rgba(0,212,170,.12);--acd2:rgba(0,212,170,.06);
+  --tx:#e8eaf0;--tm:#7b82a0;--td:#4a5070;
+  --gr:#22c55e;--grd:rgba(34,197,94,.12);
+  --rd:#ef4444;--rdd:rgba(239,68,68,.12);
+  --am:#f59e0b;--amd:rgba(245,158,11,.12);
+  --bl:#3b82f6;--bld:rgba(59,130,246,.12);
+  --pu:#a855f7;--pud:rgba(168,85,247,.12);
+  --fn:'Inter',system-ui,sans-serif;
+  --mn:'JetBrains Mono','Fira Code',monospace;
+  --r:8px;--rl:12px
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:15px;line-height:1.6}
 body{min-height:100vh;padding-bottom:4rem}
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
 header{background:linear-gradient(135deg,#0f1117,#1a1d27,#0f1117);border-bottom:1px solid var(--bd);padding:2rem 0 1.5rem;position:relative;overflow:hidden}
 header::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(0,212,170,.08),transparent 70%);pointer-events:none}
-.hi{max-width:960px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.hi{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 .brand{display:flex;align-items:center;gap:12px}
 .bi{width:40px;height:40px;background:var(--acd);border:1px solid var(--ac);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px}
 .bt h1{font-size:18px;font-weight:600;letter-spacing:-.02em}
@@ -21,13 +35,15 @@ header::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;he
 .badge{font-size:11px;font-weight:500;padding:4px 10px;border-radius:999px;border:1px solid var(--bd);color:var(--tm);background:var(--sf)}
 .badge.gr{border-color:var(--gr);color:var(--gr);background:var(--grd)}
 .badge.ac{border-color:var(--ac);color:var(--ac);background:var(--acd)}
-main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 0}
+
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 0}
 .tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:4px}
 .tab{flex:1;padding:8px 12px;font-size:13px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
 .tab:hover{color:var(--tx)}
 .tab.active{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
 .tp{display:none}
 .tp.active{display:block}
+
 .sec{margin-bottom:1.75rem}
 .sl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--td);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .sl::after{content:'';flex:1;height:1px;background:var(--bd)}
@@ -37,6 +53,7 @@ main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 0}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:640px){.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
 @media(max-width:400px){.g3,.g4,.g2{grid-template-columns:1fr}}
+
 .fld{display:flex;flex-direction:column;gap:6px}
 .fld label{font-size:12px;color:var(--tm);font-weight:500}
 .iw{position:relative}
@@ -48,6 +65,7 @@ input.hp{padding-left:36px}
 input:focus,select:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
 input:hover,select:hover{border-color:#3e4460}
 input[readonly]{opacity:.5;cursor:default}
+
 .tg{display:flex;gap:6px;flex-wrap:wrap}
 .tb{flex:1;min-width:90px;padding:8px 12px;font-size:12px;font-weight:500;border-radius:var(--r);border:1px solid var(--bd);background:var(--bg);color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
 .tb:hover{border-color:#3e4460;color:var(--tx)}
@@ -66,6 +84,7 @@ input[readonly]{opacity:.5;cursor:default}
 .btn-st{background:var(--sf2);color:var(--tm);border:1px solid var(--bd);font-size:13px}
 .btn-st:hover{color:var(--tx)}
 .btn-d{background:var(--rdd);color:var(--rd);border:1px solid rgba(239,68,68,.35);font-size:12px;padding:6px 14px}
+
 #results{display:none}
 .ss{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
 @media(max-width:600px){.ss{grid-template-columns:1fr 1fr}}
@@ -140,9 +159,59 @@ table.ht tbody tr:hover td{background:var(--sf2)}
 .ts{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:500;display:none}
 .ts.ok{display:inline-block;background:var(--grd);color:var(--gr)}
 .ts.er{display:inline-block;background:var(--rdd);color:var(--rd)}
-footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
 
-/* ── PASSWORD LOCK ── */
+/* ─── DASHBOARD ─── */
+.dash-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.75rem}
+@media(max-width:860px){.dash-kpi{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.dash-kpi{grid-template-columns:1fr}}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.12}
+.kpi.k-gr::before{background:var(--gr)}
+.kpi.k-rd::before{background:var(--rd)}
+.kpi.k-ac::before{background:var(--ac)}
+.kpi.k-am::before{background:var(--am)}
+.kpi-icon{font-size:18px;margin-bottom:8px}
+.kpi-label{font-size:11px;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.kpi-val{font-family:var(--mn);font-size:22px;font-weight:500;color:var(--tx);line-height:1}
+.kpi-sub{font-size:11px;color:var(--td);margin-top:5px}
+.kpi.k-gr .kpi-val{color:var(--gr)}
+.kpi.k-rd .kpi-val{color:var(--rd)}
+.kpi.k-ac .kpi-val{color:var(--ac)}
+.kpi.k-am .kpi-val{color:var(--am)}
+
+.dash-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:1.75rem}
+.dash-grid-3{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:1.75rem}
+@media(max-width:780px){.dash-grid-2,.dash-grid-3{grid-template-columns:1fr}}
+.chart-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.25rem;position:relative}
+.chart-card h4{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--td);margin-bottom:14px}
+.chart-wrap{position:relative}
+.chart-wrap canvas{width:100%!important}
+
+.sym-table{width:100%;border-collapse:collapse}
+.sym-table th{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--td);padding:6px 10px;text-align:left;border-bottom:1px solid var(--bd)}
+.sym-table td{padding:8px 10px;font-size:12px;color:var(--tm);border-bottom:1px solid rgba(46,51,80,.5)}
+.sym-table tr:last-child td{border-bottom:none}
+.sym-table td.mono{font-family:var(--mn);color:var(--tx)}
+.sym-table td.pos{font-family:var(--mn);color:var(--gr);font-weight:500}
+.sym-table td.neg{font-family:var(--mn);color:var(--rd);font-weight:500}
+.sym-table tbody tr:hover td{background:var(--sf2)}
+.wr-bar{width:100%;height:5px;background:var(--bd);border-radius:99px;margin-top:4px;overflow:hidden}
+.wr-fill{height:100%;background:var(--gr);border-radius:99px;transition:width .4s}
+.best-worst{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.75rem}
+@media(max-width:560px){.best-worst{grid-template-columns:1fr}}
+.bw-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1rem 1.25rem}
+.bw-card.best{border-color:rgba(34,197,94,.3)}
+.bw-card.worst{border-color:rgba(239,68,68,.3)}
+.bw-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--td);margin-bottom:8px}
+.bw-sym{font-size:20px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.bw-meta{font-size:12px;color:var(--tm)}
+.bw-val{font-family:var(--mn);font-size:16px;font-weight:500;margin-top:6px}
+.bw-card.best .bw-val{color:var(--gr)}
+.bw-card.worst .bw-val{color:var(--rd)}
+.dash-empty{text-align:center;padding:5rem 2rem;color:var(--td);font-size:14px;line-height:2}
+.dash-empty span{font-size:36px;display:block;margin-bottom:12px}
+
+/* ─── LOCK ─── */
 #lockScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem}
 #lockScreen.hidden{display:none}
 .lock-card{width:100%;max-width:380px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;position:relative}
@@ -165,7 +234,6 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 .lock-change:hover{color:var(--tm);background:var(--sf2)}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 
-/* change-password modal */
 #changePwModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:1.5rem;display:none}
 #changePwModal.open{display:flex}
 .modal-card{width:100%;max-width:360px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2rem;display:flex;flex-direction:column;gap:1rem}
@@ -180,11 +248,13 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 .modal-cancel{background:var(--sf2);color:var(--tm)}
 .modal-save{background:var(--ac);color:#0f1117}
 .modal-err{font-size:12px;color:var(--rd)}
+
+footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
 </style>
 </head>
 <body>
 
-<!-- ══ LOCK SCREEN ══ -->
+<!-- LOCK SCREEN -->
 <div id="lockScreen">
   <div class="lock-card">
     <button class="lock-change" onclick="openChangePw()" title="Change password">⚙ Change password</button>
@@ -196,7 +266,7 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
     <div class="lock-field">
       <label>Password</label>
       <div class="lock-pw-wrap">
-        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unlock()" />
+        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unlock()"/>
         <button class="pw-eye" onclick="togglePwVis()" id="eyeBtn" title="Show/hide">👁</button>
       </div>
     </div>
@@ -206,23 +276,14 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   </div>
 </div>
 
-<!-- ══ CHANGE PASSWORD MODAL ══ -->
+<!-- CHANGE PASSWORD MODAL -->
 <div id="changePwModal">
   <div class="modal-card">
     <h3>🔑 Set new password</h3>
     <p>First time? The default password is <strong style="color:var(--ac);font-family:var(--mn)">psx2025</strong> — change it now to something only you know.</p>
-    <div class="modal-field">
-      <label>Current password</label>
-      <input type="password" id="curPw" placeholder="Current password" />
-    </div>
-    <div class="modal-field">
-      <label>New password</label>
-      <input type="password" id="newPw" placeholder="Min 6 characters" />
-    </div>
-    <div class="modal-field">
-      <label>Confirm new password</label>
-      <input type="password" id="conPw" placeholder="Repeat new password" />
-    </div>
+    <div class="modal-field"><label>Current password</label><input type="password" id="curPw" placeholder="Current password"/></div>
+    <div class="modal-field"><label>New password</label><input type="password" id="newPw" placeholder="Min 6 characters"/></div>
+    <div class="modal-field"><label>Confirm new password</label><input type="password" id="conPw" placeholder="Repeat new password"/></div>
     <div class="modal-err" id="modalErr"></div>
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeChangePw()">Cancel</button>
@@ -235,7 +296,7 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   <div class="hi">
     <div class="brand">
       <div class="bi">📈</div>
-      <div class="bt"><h1>PSX Trade Calculator</h1><p>Brokerage · Levies · CGT · Google Sheets sync</p></div>
+      <div class="bt"><h1>PSX Trade Calculator</h1><p>Brokerage · Levies · CGT · Dashboard · Google Sheets sync</p></div>
     </div>
     <div class="badges">
       <span class="badge gr">JS Global</span>
@@ -248,11 +309,12 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 <main>
 <div class="tabs">
   <button class="tab active" onclick="switchTab('calc',this)">📊 Calculator</button>
+  <button class="tab" onclick="switchTab('dashboard',this)">📈 Dashboard</button>
   <button class="tab" onclick="switchTab('history',this)">📋 Trade History</button>
   <button class="tab" onclick="switchTab('settings',this)">⚙️ Sheet Setup</button>
 </div>
 
-<!-- CALCULATOR -->
+<!-- ═══ CALCULATOR ═══ -->
 <div class="tp active" id="tab-calc">
   <div class="sec">
     <div class="sl">Trade details</div>
@@ -297,7 +359,84 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   </div>
 </div>
 
-<!-- HISTORY -->
+<!-- ═══ DASHBOARD ═══ -->
+<div class="tp" id="tab-dashboard">
+  <div id="dashEmpty" class="dash-empty" style="display:none">
+    <span>📊</span>
+    No trades recorded yet.<br>
+    Calculate a trade and click <strong style="color:var(--ac)">"Save to Sheet"</strong> to start building your dashboard.
+  </div>
+  <div id="dashContent">
+    <!-- KPI strip -->
+    <div class="sec">
+      <div class="sl" style="margin-bottom:12px">Portfolio overview
+        <span style="margin-left:auto;display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-weight:400">
+          <span id="syncStatus" style="font-size:11px;color:var(--td)"></span>
+          <button class="btn btn-st" style="font-size:11px;padding:4px 12px" onclick="syncFromSheet(true)">🔄 Sync from Sheet</button>
+        </span>
+      </div>
+      <div class="dash-kpi" id="dashKpi"></div>
+    </div>
+    <!-- Best / Worst trades -->
+    <div class="sec">
+      <div class="sl">Best &amp; worst trades</div>
+      <div class="best-worst" id="bestWorst"></div>
+    </div>
+    <!-- Charts row 1 -->
+    <div class="sec">
+      <div class="sl">Profit &amp; CGT trend</div>
+      <div class="dash-grid-2">
+        <div class="chart-card">
+          <h4>Cumulative Equity Curve (Filer)</h4>
+          <div class="chart-wrap" style="height:220px"><canvas id="chartEquity"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Monthly Net Profit (Filer)</h4>
+          <div class="chart-wrap" style="height:220px"><canvas id="chartMonthly"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <!-- Charts row 2 -->
+    <div class="sec">
+      <div class="sl">Charges &amp; holding analysis</div>
+      <div class="dash-grid-2">
+        <div class="chart-card">
+          <h4>CGT Paid per Trade (Filer)</h4>
+          <div class="chart-wrap" style="height:220px"><canvas id="chartCGT"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>Holding Period Distribution</h4>
+          <div class="chart-wrap" style="height:220px"><canvas id="chartHolding"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <!-- Symbol breakdown -->
+    <div class="sec">
+      <div class="sl">Per-symbol performance</div>
+      <div class="chart-card" style="margin-bottom:1.75rem">
+        <h4>Stock-by-stock breakdown</h4>
+        <div style="overflow-x:auto">
+          <table class="sym-table" id="symTable">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Trades</th>
+                <th style="text-align:right">Invested</th>
+                <th style="text-align:right">Total Profit</th>
+                <th style="text-align:right">CGT Paid</th>
+                <th style="text-align:right">Win Rate</th>
+                <th style="text-align:right">Avg Return %</th>
+              </tr>
+            </thead>
+            <tbody id="symTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HISTORY ═══ -->
 <div class="tp" id="tab-history">
   <div class="sec">
     <div class="sl">Monthly summary</div>
@@ -320,13 +459,13 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   </div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ═══ SETTINGS ═══ -->
 <div class="tp" id="tab-settings">
   <div class="ss3">
     <h3>Connect Google Sheets — one-time setup (5 minutes)</h3>
     <p>Your app sends trade data to a Google Apps Script URL → the Script appends a row to your Sheet automatically. Completely free, no login required in the app.</p>
     <div class="step"><div class="sn">1</div><div class="stx"><strong>Open Google Sheets</strong>, create a new spreadsheet. Name it <strong>PSX Trade Log</strong>.</div></div>
-    <div class="step"><div class="sn">2</div><div class="stx"><strong>Go to Extensions → Apps Script.</strong> Delete all default code and paste the script below exactly.</div></div>
+    <div class="step"><div class="sn">2</div><div class="stx"><strong>Go to Extensions → Apps Script.</strong> Delete all default code and paste the script below exactly. <strong style="color:var(--am)">If you already set this up before, replace your old script with this updated version</strong> — the new <code>doGet</code> now returns your trade data so the Dashboard can sync from the Sheet.</div></div>
     <div class="scb" id="scriptCode">function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -358,7 +497,22 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
   }
 }
 function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({status:"ok",message:"PSX Calculator connected"})).setMimeType(ContentService.MimeType.JSON);
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return ContentService.createTextOutput(JSON.stringify({status:"ok",rows:[]})).setMimeType(ContentService.MimeType.JSON);
+    var keys = ["date","time","symbol","qty","buyPrice","sellPrice","holdingPeriod",
+      "grossBuy","grossSell","brokerageBuy","salesTaxBuy","leviesBuy","totalBuyCost",
+      "brokerageSell","salesTaxSell","leviesSell","cgtFiler","cgtNonFiler",
+      "totalSellDedFiler","totalSellDedNonFiler","netProceedsFiler","netProceedsNonFiler",
+      "netProfitFiler","netProfitNonFiler","returnFiler","returnNonFiler"];
+    var rows = data.slice(1).map(function(row) {
+      var obj = {}; keys.forEach(function(k,i){ obj[k] = row[i]; }); return obj;
+    });
+    return ContentService.createTextOutput(JSON.stringify({status:"ok",rows:rows})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:"error",message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
 }</div>
     <button class="btn btn-st" onclick="copyScript()" style="margin-bottom:1rem">📋 Copy script</button>
     <div class="step"><div class="sn">3</div><div class="stx"><strong>Click Deploy → New deployment.</strong> Type: <strong>Web app</strong>. Execute as: <strong>Me</strong>. Who has access: <strong>Anyone</strong>. Click Deploy and authorize.</div></div>
@@ -386,304 +540,618 @@ Return % Filer · Return % Non-Filer</div>
 </div>
 </main>
 
-<footer>PSX Trade Calculator · FY 2025–26 · CGT deducted by NCCPL at settlement · Always verify against your broker's trade confirmation slip</footer>
+<footer>PSX Trade Calculator · FY 2025–26 · Dashboard powered by Chart.js · CGT deducted by NCCPL at settlement · Always verify against your broker's trade confirmation slip</footer>
 
 <script>
-var hldg=0,last=null,log=JSON.parse(localStorage.getItem('psx_trades')||'[]');
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+var hldg = 0, last = null;
+var log = JSON.parse(localStorage.getItem('psx_trades') || '[]');
+var charts = {};
 
-function switchTab(name,el){
-  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
   el.classList.add('active');
-  if(name==='history')renderHist();
+  if (name === 'history') renderHist();
+  if (name === 'dashboard') { renderDash(); syncFromSheet(false); }
 }
 
-document.querySelectorAll('#holding .tb').forEach(b=>{
-  b.onclick=()=>{document.querySelectorAll('#holding .tb').forEach(x=>x.classList.remove('active'));b.classList.add('active');hldg=+b.dataset.val;};
+// ═══════════════════════════════════════════════
+// HOLDING TOGGLE
+// ═══════════════════════════════════════════════
+document.querySelectorAll('#holding .tb').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#holding .tb').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    hldg = +b.dataset.val;
+  };
 });
 
-function r2(n){return Math.round(n*100)/100;}
-function fmt(n){return '₨\u202f'+Math.abs(n).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function fmtS(n){return(n>=0?'+':'−')+fmt(n);}
-function fmtK(n){return '₨\u202f'+(Math.abs(n)/1000).toFixed(1)+'k';}
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function r2(n) { return Math.round(n * 100) / 100; }
+function fmt(n) { return '₨\u202f' + Math.abs(n).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtS(n) { return (n >= 0 ? '+' : '−') + fmt(n); }
+function fmtK(n) { return '₨\u202f' + (Math.abs(n) / 1000).toFixed(1) + 'k'; }
+function fmtM(n) { return Math.abs(n) >= 1000000 ? '₨\u202f' + (n / 1000000).toFixed(2) + 'M' : fmtK(n); }
+function broker(price, qty, pct, flat) { return price <= 20 ? qty * flat : price * qty * (pct / 100); }
+function stax(b) { return b * 0.13; }
+function levies(v) { return v * (0.000001 + 0.00005 + 0.0001 + 0.00015); }
+var CGF = [.15, .125, .10, .075], CGNF = [.30, .25, .20, .15];
+var CGLf = ['15%', '12.5%', '10%', '7.5%'], CGLn = ['30%', '25%', '20%', '15%'];
+function cgt(profit, p, filer) { return profit <= 0 ? 0 : profit * (filer ? CGF[p] : CGNF[p]); }
 
-function broker(price,qty,pct,flat){return price<=20?qty*flat:price*qty*(pct/100);}
-function stax(b){return b*0.13;}
-function levies(v){return v*(0.000001+0.00005+0.0001+0.00015);}
-var CGF=[.15,.125,.10,.075],CGNF=[.30,.25,.20,.15];
-var CGLf=['15%','12.5%','10%','7.5%'],CGLn=['30%','25%','20%','15%'];
-function cgt(profit,p,filer){return profit<=0?0:profit*(filer?CGF[p]:CGNF[p]);}
+// ═══════════════════════════════════════════════
+// CALCULATOR
+// ═══════════════════════════════════════════════
+function calc() {
+  var qty = +document.getElementById('qty').value || 0;
+  var bp = +document.getElementById('buy').value || 0;
+  var sp = +document.getElementById('sell').value || 0;
+  var pct = +document.getElementById('bPct').value || 0.15;
+  var flat = +document.getElementById('flatR').value || 0.03;
+  var sym = (document.getElementById('symbol').value || '').toUpperCase().trim();
+  if (qty <= 0 || bp <= 0 || sp <= 0) { alert('Enter valid qty, buy price and sell price.'); return; }
 
-function calc(){
-  var qty=+document.getElementById('qty').value||0;
-  var bp=+document.getElementById('buy').value||0;
-  var sp=+document.getElementById('sell').value||0;
-  var pct=+document.getElementById('bPct').value||0.15;
-  var flat=+document.getElementById('flatR').value||0.03;
-  var sym=(document.getElementById('symbol').value||'').toUpperCase().trim();
-  if(qty<=0||bp<=0||sp<=0){alert('Enter valid qty, buy price and sell price.');return;}
+  var bgr = r2(qty * bp), bbr = r2(broker(bp, qty, pct, flat)), bst = r2(stax(bbr)), blv = r2(levies(bgr));
+  var bdd = r2(bbr + bst + blv), btot = r2(bgr + bdd);
+  var sgr = r2(qty * sp), sbr = r2(broker(sp, qty, pct, flat)), sst = r2(stax(sbr)), slv = r2(levies(sgr));
+  var sntd = r2(sbr + sst + slv);
+  var tp = r2(sgr - btot);
+  var cgf = r2(cgt(tp, hldg, true)), cgnf = r2(cgt(tp, hldg, false));
+  var stf = r2(sntd + cgf), stnf = r2(sntd + cgnf);
+  var nf = r2(sgr - stf), nnf = r2(sgr - stnf);
+  var prf = r2(nf - btot), prnf = r2(nnf - btot);
+  var retf = btot > 0 ? r2(prf / btot * 100) : 0, retnf = btot > 0 ? r2(prnf / btot * 100) : 0;
+  var bm = bp <= 20 ? '₨' + flat + '/share (price ≤ ₨20)' : pct + '% of value';
+  var sm = sp <= 20 ? '₨' + flat + '/share (price ≤ ₨20)' : pct + '% of value';
+  var hl = ['under 1 year', '1–2 years', '2–3 years', 'over 3 years'][hldg];
 
-  var bgr=r2(qty*bp),bbr=r2(broker(bp,qty,pct,flat)),bst=r2(stax(bbr)),blv=r2(levies(bgr));
-  var bdd=r2(bbr+bst+blv),btot=r2(bgr+bdd);
-  var sgr=r2(qty*sp),sbr=r2(broker(sp,qty,pct,flat)),sst=r2(stax(sbr)),slv=r2(levies(sgr));
-  var sntd=r2(sbr+sst+slv);
-  var tp=r2(sgr-btot);
-  var cgf=r2(cgt(tp,hldg,true)),cgnf=r2(cgt(tp,hldg,false));
-  var stf=r2(sntd+cgf),stnf=r2(sntd+cgnf);
-  var nf=r2(sgr-stf),nnf=r2(sgr-stnf);
-  var prf=r2(nf-btot),prnf=r2(nnf-btot);
-  var retf=btot>0?r2(prf/btot*100):0,retnf=btot>0?r2(prnf/btot*100):0;
-  var bm=bp<=20?'₨'+flat+'/share (price ≤ ₨20)':pct+'% of value';
-  var sm=sp<=20?'₨'+flat+'/share (price ≤ ₨20)':pct+'% of value';
-  var hl=['under 1 year','1–2 years','2–3 years','over 3 years'][hldg];
+  last = { sym, qty, bp, sp, pct, flat, hl, bgr, sgr, bbr, bst, blv, btot, sbr, sst, slv, cgf, cgnf, stf, stnf, nf, nnf, prf, prnf, retf, retnf, tp };
 
-  last={sym,qty,bp,sp,pct,flat,hl,bgr,sgr,bbr,bst,blv,btot,sbr,sst,slv,cgf,cgnf,stf,stnf,nf,nnf,prf,prnf,retf,retnf,tp};
+  var pc = prf >= 0 ? 'pf' : 'ls';
+  document.getElementById('sumStrip').innerHTML =
+    '<div class="sc"><div class="sl2">Total buy cost</div><div class="sv">' + fmt(btot) + '</div><div class="ss2">' + qty.toLocaleString() + ' shares @ ₨' + bp + '</div></div>' +
+    '<div class="sc"><div class="sl2">Net proceeds (filer)</div><div class="sv">' + fmt(nf) + '</div><div class="ss2">After all charges + CGT</div></div>' +
+    '<div class="sc ' + pc + '"><div class="sl2">Net profit / loss (filer)</div><div class="sv">' + fmtS(prf) + '</div><div class="ss2">Return: ' + (retf >= 0 ? '+' : '') + retf.toFixed(2) + '%</div></div>';
 
-  var pc=prf>=0?'pf':'ls';
-  document.getElementById('sumStrip').innerHTML=
-    '<div class="sc"><div class="sl2">Total buy cost</div><div class="sv">'+fmt(btot)+'</div><div class="ss2">'+qty.toLocaleString()+' shares @ ₨'+bp+'</div></div>'+
-    '<div class="sc"><div class="sl2">Net proceeds (filer)</div><div class="sv">'+fmt(nf)+'</div><div class="ss2">After all charges + CGT</div></div>'+
-    '<div class="sc '+pc+'"><div class="sl2">Net profit / loss (filer)</div><div class="sv">'+fmtS(prf)+'</div><div class="ss2">Return: '+(retf>=0?'+':'')+retf.toFixed(2)+'%</div></div>';
+  document.getElementById('dualPanel').innerHTML =
+    '<div class="pnl"><div class="ph"><span class="pt">Tax filer (ATL)</span><span class="fb">Filer</span></div><table class="bt">' +
+    '<tr><td class="tl">CGT rate (' + hl + ')</td><td class="tv">' + CGLf[hldg] + '</td></tr>' +
+    '<tr><td class="tl">CGT amount</td><td class="tv">' + fmt(cgf) + '</td></tr>' +
+    '<tr><td class="tl">Total sell deductions</td><td class="tv">' + fmt(stf) + '</td></tr>' +
+    '<tr><td class="tl">Net sell proceeds</td><td class="tv">' + fmt(nf) + '</td></tr>' +
+    '<tr><td class="tl" style="color:' + (prf >= 0 ? 'var(--gr)' : 'var(--rd)') + '">Net profit / loss</td><td class="tv" style="color:' + (prf >= 0 ? 'var(--gr)' : 'var(--rd)') + '">' + fmtS(prf) + '</td></tr>' +
+    '<tr><td class="tl">Return %</td><td class="tv">' + retf.toFixed(2) + '%</td></tr></table></div>' +
+    '<div class="pnl"><div class="ph"><span class="pt">Non-filer</span><span class="nfb">Non-filer</span></div><table class="bt">' +
+    '<tr><td class="tl">CGT rate (' + hl + ')</td><td class="tv">' + CGLn[hldg] + '</td></tr>' +
+    '<tr><td class="tl">CGT amount</td><td class="tv">' + fmt(cgnf) + '</td></tr>' +
+    '<tr><td class="tl">Total sell deductions</td><td class="tv">' + fmt(stnf) + '</td></tr>' +
+    '<tr><td class="tl">Net sell proceeds</td><td class="tv">' + fmt(nnf) + '</td></tr>' +
+    '<tr><td class="tl" style="color:' + (prnf >= 0 ? 'var(--gr)' : 'var(--rd)') + '">Net profit / loss</td><td class="tv" style="color:' + (prnf >= 0 ? 'var(--gr)' : 'var(--rd)') + '">' + fmtS(prnf) + '</td></tr>' +
+    '<tr><td class="tl">Return %</td><td class="tv">' + retnf.toFixed(2) + '%</td></tr></table></div>';
 
-  document.getElementById('dualPanel').innerHTML=
-    '<div class="pnl"><div class="ph"><span class="pt">Tax filer (ATL)</span><span class="fb">Filer</span></div><table class="bt">'+
-    '<tr><td class="tl">CGT rate ('+hl+')</td><td class="tv">'+CGLf[hldg]+'</td></tr>'+
-    '<tr><td class="tl">CGT amount</td><td class="tv">'+fmt(cgf)+'</td></tr>'+
-    '<tr><td class="tl">Total sell deductions</td><td class="tv">'+fmt(stf)+'</td></tr>'+
-    '<tr><td class="tl">Net sell proceeds</td><td class="tv">'+fmt(nf)+'</td></tr>'+
-    '<tr><td class="tl" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">Net profit / loss</td><td class="tv" style="color:'+(prf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prf)+'</td></tr>'+
-    '<tr><td class="tl">Return %</td><td class="tv">'+retf.toFixed(2)+'%</td></tr></table></div>'+
-    '<div class="pnl"><div class="ph"><span class="pt">Non-filer</span><span class="nfb">Non-filer</span></div><table class="bt">'+
-    '<tr><td class="tl">CGT rate ('+hl+')</td><td class="tv">'+CGLn[hldg]+'</td></tr>'+
-    '<tr><td class="tl">CGT amount</td><td class="tv">'+fmt(cgnf)+'</td></tr>'+
-    '<tr><td class="tl">Total sell deductions</td><td class="tv">'+fmt(stnf)+'</td></tr>'+
-    '<tr><td class="tl">Net sell proceeds</td><td class="tv">'+fmt(nnf)+'</td></tr>'+
-    '<tr><td class="tl" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">Net profit / loss</td><td class="tv" style="color:'+(prnf>=0?'var(--gr)':'var(--rd)')+'">'+fmtS(prnf)+'</td></tr>'+
-    '<tr><td class="tl">Return %</td><td class="tv">'+retnf.toFixed(2)+'%</td></tr></table></div>';
-
-  function mkBkd(side,gv,br,st,lv,totf,totnf,mode,isSell){
-    return '<div class="bkd"><div class="bh"><span class="btt">'+side+'</span><span class="btv">'+fmt(gv)+'</span></div>'+
-      '<table class="bt">'+
-      '<tr><td class="tl">Brokerage commission<div class="tn">'+mode+'</div></td><td class="tv">'+fmt(br)+'</td></tr>'+
-      '<tr><td class="tl">Sales tax on brokerage<div class="tn">13% of brokerage</div></td><td class="tv">'+fmt(st)+'</td></tr>'+
-      '<tr><td class="tl">Regulatory levies<div class="tn">SECP + PSX + NCCPL + CDC</div></td><td class="tv">'+fmt(lv)+'</td></tr>'+
-      (isSell&&tp>0?
-        '<tr class="rcf"><td class="tl">CGT on profit <span class="pill pg">Filer '+CGLf[hldg]+'</span><div class="tn">Taxable profit: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgf)+'</td></tr>'+
-        '<tr class="rcn"><td class="tl">CGT on profit <span class="pill pa">Non-filer '+CGLn[hldg]+'</span><div class="tn">Taxable profit: '+fmt(tp)+'</div></td><td class="tv">'+fmt(cgnf)+'</td></tr>'
-      :(isSell?'<tr><td class="tl" style="color:var(--td)">CGT — no profit, no tax</td><td class="tv" style="color:var(--td)">—</td></tr>':''))+
-      '<tr class="rst"><td class="tl">Total deductions'+(isSell?' <span class="pill pg">filer</span>':'')+'</td><td class="tv">'+fmt(totf)+'</td></tr>'+
-      (isSell?'<tr class="rst"><td class="tl">Total deductions <span class="pill pa">non-filer</span></td><td class="tv">'+fmt(totnf)+'</td></tr>':'')+
+  function mkBkd(side, gv, br, st, lv, totf, totnf, mode, isSell) {
+    return '<div class="bkd"><div class="bh"><span class="btt">' + side + '</span><span class="btv">' + fmt(gv) + '</span></div>' +
+      '<table class="bt">' +
+      '<tr><td class="tl">Brokerage commission<div class="tn">' + mode + '</div></td><td class="tv">' + fmt(br) + '</td></tr>' +
+      '<tr><td class="tl">Sales tax on brokerage<div class="tn">13% of brokerage</div></td><td class="tv">' + fmt(st) + '</td></tr>' +
+      '<tr><td class="tl">Regulatory levies<div class="tn">SECP + PSX + NCCPL + CDC</div></td><td class="tv">' + fmt(lv) + '</td></tr>' +
+      (isSell && tp > 0 ?
+        '<tr class="rcf"><td class="tl">CGT on profit <span class="pill pg">Filer ' + CGLf[hldg] + '</span><div class="tn">Taxable profit: ' + fmt(tp) + '</div></td><td class="tv">' + fmt(cgf) + '</td></tr>' +
+        '<tr class="rcn"><td class="tl">CGT on profit <span class="pill pa">Non-filer ' + CGLn[hldg] + '</span><div class="tn">Taxable profit: ' + fmt(tp) + '</div></td><td class="tv">' + fmt(cgnf) + '</td></tr>'
+        : (isSell ? '<tr><td class="tl" style="color:var(--td)">CGT — no profit, no tax</td><td class="tv" style="color:var(--td)">—</td></tr>' : '')) +
+      '<tr class="rst"><td class="tl">Total deductions' + (isSell ? ' <span class="pill pg">filer</span>' : '') + '</td><td class="tv">' + fmt(totf) + '</td></tr>' +
+      (isSell ? '<tr class="rst"><td class="tl">Total deductions <span class="pill pa">non-filer</span></td><td class="tv">' + fmt(totnf) + '</td></tr>' : '') +
       '</table></div>';
   }
 
-  document.getElementById('buyBkd').innerHTML=mkBkd('Buy side',bgr,bbr,bst,blv,bdd,bdd,bm,false);
-  document.getElementById('sellBkd').innerHTML=mkBkd('Sell side',sgr,sbr,sst,slv,stf,stnf,sm,true);
-  document.getElementById('saveDesc').textContent=sym?sym+' · '+qty.toLocaleString()+' shares · Profit: '+fmtS(prf):qty.toLocaleString()+' shares · Profit: '+fmtS(prf);
-  document.getElementById('noteBox').innerHTML='<strong style="color:var(--ac)">Important notes</strong><br>CGT is computed on taxable profit (sell gross minus full buy cost including buy-side charges) and deducted by NCCPL at settlement. Brokerage: ₨'+flat+'/share for prices ≤ ₨20; '+pct+'% of value above ₨20. Regulatory levies are approximate — verify against your broker\'s trade confirmation slip.';
-  document.getElementById('results').style.display='block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('buyBkd').innerHTML = mkBkd('Buy side', bgr, bbr, bst, blv, bdd, bdd, bm, false);
+  document.getElementById('sellBkd').innerHTML = mkBkd('Sell side', sgr, sbr, sst, slv, stf, stnf, sm, true);
+  document.getElementById('saveDesc').textContent = sym ? sym + ' · ' + qty.toLocaleString() + ' shares · Profit: ' + fmtS(prf) : qty.toLocaleString() + ' shares · Profit: ' + fmtS(prf);
+  document.getElementById('noteBox').innerHTML = '<strong style="color:var(--ac)">Important notes</strong><br>CGT is computed on taxable profit (sell gross minus full buy cost including buy-side charges) and deducted by NCCPL at settlement. Brokerage: ₨' + flat + '/share for prices ≤ ₨20; ' + pct + '% of value above ₨20. Regulatory levies are approximate — verify against your broker\'s trade confirmation slip.';
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-async function saveToSheet(){
-  var url=localStorage.getItem('psx_script_url');
-  if(!url){alert('No Sheet URL saved. Go to ⚙️ Sheet Setup tab first.');return;}
-  if(!last){alert('Calculate a trade first.');return;}
-  var btn=document.getElementById('saveBtn'),sts=document.getElementById('saveSts');
-  btn.disabled=true;sts.textContent='Saving…';sts.className='sts ld';
-  var now=new Date();
-  var payload={
-    date:now.toLocaleDateString('en-PK'),time:now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}),
-    symbol:last.sym||'—',qty:last.qty,buyPrice:last.bp,sellPrice:last.sp,holdingPeriod:last.hl,
-    grossBuy:last.bgr,grossSell:last.sgr,brokerageBuy:last.bbr,salesTaxBuy:last.bst,leviesBuy:last.blv,totalBuyCost:last.btot,
-    brokerageSell:last.sbr,salesTaxSell:last.sst,leviesSell:last.slv,
-    cgtFiler:last.cgf,cgtNonFiler:last.cgnf,totalSellDedFiler:last.stf,totalSellDedNonFiler:last.stnf,
-    netProceedsFiler:last.nf,netProceedsNonFiler:last.nnf,netProfitFiler:last.prf,netProfitNonFiler:last.prnf,
-    returnFiler:last.retf,returnNonFiler:last.retnf
-  };
-  log.push({...payload,id:Date.now()});
-  localStorage.setItem('psx_trades',JSON.stringify(log));
-  try{
-    var res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-    var json=await res.json();
-    if(json.status==='ok'){sts.textContent='✓ Saved to Sheet';sts.className='sts ok';}
-    else throw new Error(json.message||'Unknown error');
-  }catch(err){
-    sts.textContent='✓ Saved locally (Sheet: '+err.message.substring(0,35)+')';sts.className='sts er';
-  }
-  btn.disabled=false;
-  setTimeout(()=>{sts.textContent='';sts.className='sts';},6000);
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
 }
 
-function exportCSV(){
-  if(!last){alert('Calculate a trade first.');return;}
-  var now=new Date(),r=last;
-  var h=['Date','Time','Symbol','Qty','Buy Price','Sell Price','Holding Period','Gross Buy','Gross Sell','Brokerage Buy','Sales Tax Buy','Levies Buy','Total Buy Cost','Brokerage Sell','Sales Tax Sell','Levies Sell','CGT Filer','CGT Non-Filer','Total Sell Ded Filer','Total Sell Ded Non-Filer','Net Proceeds Filer','Net Proceeds Non-Filer','Net Profit Filer','Net Profit Non-Filer','Return% Filer','Return% Non-Filer'];
-  var d=[now.toLocaleDateString('en-PK'),now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}),r.sym||'—',r.qty,r.bp,r.sp,r.hl,r.bgr,r.sgr,r.bbr,r.bst,r.blv,r.btot,r.sbr,r.sst,r.slv,r.cgf,r.cgnf,r.stf,r.stnf,r.nf,r.nnf,r.prf,r.prnf,r.retf,r.retnf];
-  dl(h.join(',')+'\n'+d.join(','),'psx_trade_'+(r.sym||'trade')+'_'+now.toISOString().slice(0,10)+'.csv');
-}
-
-function exportAll(){
-  if(!log.length){alert('No trades in local history.');return;}
-  var h=Object.keys(log[0]).filter(k=>k!=='id');
-  var rows=log.map(t=>h.map(k=>t[k]??'').join(','));
-  dl(h.join(',')+'\n'+rows.join('\n'),'psx_all_trades_'+new Date().toISOString().slice(0,10)+'.csv');
-}
-
-function dl(content,name){
-  var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(content);
-  a.download=name;a.click();
-}
-
-function renderHist(){
-  if(!log.length){
-    document.getElementById('histContent').innerHTML='<div class="he">No trades recorded yet.<br>Calculate a trade and click "Save to Sheet" to log it.</div>';
-    ['mT','mB','mC','mP'].forEach(id=>document.getElementById(id).textContent=id==='mT'?'0':'₨0');
+function renderDash() {
+  if (!log.length) {
+    document.getElementById('dashEmpty').style.display = 'block';
+    document.getElementById('dashContent').style.display = 'none';
     return;
   }
-  var tB=log.reduce((s,t)=>s+(+t.totalBuyCost||0),0);
-  var tC=log.reduce((s,t)=>s+(+t.cgtFiler||0),0);
-  var tP=log.reduce((s,t)=>s+(+t.netProfitFiler||0),0);
-  document.getElementById('mT').textContent=log.length;
-  document.getElementById('mB').textContent=fmtK(tB);
-  document.getElementById('mC').textContent=fmtK(tC);
-  var mP=document.getElementById('mP');
-  mP.textContent=fmtK(tP);mP.style.color=tP>=0?'var(--gr)':'var(--rd)';
-  var rows=[...log].reverse().map(t=>{
-    var p=+t.netProfitFiler||0,pc=p>0?'ps':p<0?'ng':'nm';
-    return '<tr><td>'+t.date+'</td><td style="color:var(--ac);font-weight:500">'+(t.symbol||'—')+'</td>'+
-      '<td class="nm">'+((+t.qty||0).toLocaleString())+'</td>'+
-      '<td class="nm">₨'+(+t.buyPrice||0).toFixed(2)+'</td>'+
-      '<td class="nm">₨'+(+t.sellPrice||0).toFixed(2)+'</td>'+
-      '<td>'+(t.holdingPeriod||'—')+'</td>'+
-      '<td class="nm">'+fmt(+t.totalBuyCost||0)+'</td>'+
-      '<td class="nm">'+fmt(+t.cgtFiler||0)+'</td>'+
-      '<td class="'+pc+'">'+fmtS(p)+'</td>'+
-      '<td class="'+pc+'">'+(+t.returnFiler||0).toFixed(2)+'%</td></tr>';
+  document.getElementById('dashEmpty').style.display = 'none';
+  document.getElementById('dashContent').style.display = 'block';
+
+  var totalInvested = log.reduce((s, t) => s + (+t.totalBuyCost || 0), 0);
+  var totalProfit = log.reduce((s, t) => s + (+t.netProfitFiler || 0), 0);
+  var totalCGT = log.reduce((s, t) => s + (+t.cgtFiler || 0), 0);
+  var wins = log.filter(t => (+t.netProfitFiler || 0) > 0).length;
+  var winRate = log.length ? Math.round(wins / log.length * 100) : 0;
+  var avgReturn = log.length ? (log.reduce((s, t) => s + (+t.returnFiler || 0), 0) / log.length) : 0;
+
+  // KPI cards
+  document.getElementById('dashKpi').innerHTML =
+    kpiCard('k-ac', '💰', 'Total Invested', fmtM(totalInvested), log.length + ' trades', '') +
+    kpiCard(totalProfit >= 0 ? 'k-gr' : 'k-rd', totalProfit >= 0 ? '📈' : '📉', 'Net Profit (Filer)',
+      (totalProfit >= 0 ? '+' : '−') + fmtM(Math.abs(totalProfit)),
+      'Avg return: ' + (avgReturn >= 0 ? '+' : '') + avgReturn.toFixed(1) + '%', '') +
+    kpiCard('k-am', '🧾', 'CGT Paid (Filer)', fmtM(totalCGT), 'Tax deducted at settlement', '') +
+    kpiCard(winRate >= 50 ? 'k-gr' : 'k-am', '🎯', 'Win Rate', winRate + '%', wins + ' profitable of ' + log.length, '');
+
+  // Best / worst
+  var sorted = [...log].sort((a, b) => (+b.netProfitFiler || 0) - (+a.netProfitFiler || 0));
+  var best = sorted[0], worst = sorted[sorted.length - 1];
+  document.getElementById('bestWorst').innerHTML =
+    '<div class="bw-card best">' +
+    '<div class="bw-title">🏆 Best trade</div>' +
+    '<div class="bw-sym">' + (best.symbol || '—') + '</div>' +
+    '<div class="bw-meta">' + best.date + ' · ' + (best.qty || 0).toLocaleString() + ' shares · Buy ₨' + best.buyPrice + ' → Sell ₨' + best.sellPrice + '</div>' +
+    '<div class="bw-val">+' + fmt(+best.netProfitFiler || 0) + ' (' + (+best.returnFiler || 0).toFixed(2) + '%)</div></div>' +
+    '<div class="bw-card worst">' +
+    '<div class="bw-title">📉 Worst trade</div>' +
+    '<div class="bw-sym">' + (worst.symbol || '—') + '</div>' +
+    '<div class="bw-meta">' + worst.date + ' · ' + (worst.qty || 0).toLocaleString() + ' shares · Buy ₨' + worst.buyPrice + ' → Sell ₨' + worst.sellPrice + '</div>' +
+    '<div class="bw-val" style="color:var(--rd)">' + fmtS(+worst.netProfitFiler || 0) + ' (' + (+worst.returnFiler || 0).toFixed(2) + '%)</div></div>';
+
+  // Equity curve
+  var sortedByDate = [...log].sort((a, b) => new Date(a.date) - new Date(b.date));
+  var cumulative = [], cumSum = 0;
+  var eqLabels = sortedByDate.map((t, i) => {
+    cumSum += (+t.netProfitFiler || 0);
+    cumulative.push(r2(cumSum));
+    return (t.symbol || 'T' + (i + 1)) + '\n' + t.date;
+  });
+  destroyChart('equity');
+  charts['equity'] = new Chart(document.getElementById('chartEquity'), {
+    type: 'line',
+    data: {
+      labels: eqLabels,
+      datasets: [{
+        label: 'Cumulative Profit',
+        data: cumulative,
+        borderColor: '#00d4aa',
+        backgroundColor: 'rgba(0,212,170,0.08)',
+        fill: true,
+        tension: 0.35,
+        pointBackgroundColor: cumulative.map(v => v >= 0 ? '#00d4aa' : '#ef4444'),
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        borderWidth: 2
+      }]
+    },
+    options: chartOpts('₨')
+  });
+
+  // Monthly P&L bar
+  var monthly = {};
+  sortedByDate.forEach(t => {
+    var key = t.date ? t.date.split('/').slice(1).join('/') : 'Unknown';
+    // Try to parse dd/mm/yyyy → "Mon YYYY"
+    try {
+      var parts = t.date.split('/');
+      if (parts.length === 3) {
+        var d = new Date(+parts[2], +parts[1] - 1, +parts[0]);
+        key = d.toLocaleDateString('en-PK', { month: 'short', year: 'numeric' });
+      }
+    } catch (e) { }
+    monthly[key] = (monthly[key] || 0) + (+t.netProfitFiler || 0);
+  });
+  var mLabels = Object.keys(monthly);
+  var mData = mLabels.map(k => r2(monthly[k]));
+  destroyChart('monthly');
+  charts['monthly'] = new Chart(document.getElementById('chartMonthly'), {
+    type: 'bar',
+    data: {
+      labels: mLabels,
+      datasets: [{
+        label: 'Net Profit',
+        data: mData,
+        backgroundColor: mData.map(v => v >= 0 ? 'rgba(34,197,94,0.7)' : 'rgba(239,68,68,0.7)'),
+        borderColor: mData.map(v => v >= 0 ? '#22c55e' : '#ef4444'),
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: chartOpts('₨')
+  });
+
+  // CGT bar
+  var cgtLabels = sortedByDate.map((t, i) => (t.symbol || 'T' + (i + 1)));
+  var cgtData = sortedByDate.map(t => +(t.cgtFiler || 0));
+  destroyChart('cgt');
+  charts['cgt'] = new Chart(document.getElementById('chartCGT'), {
+    type: 'bar',
+    data: {
+      labels: cgtLabels,
+      datasets: [{
+        label: 'CGT (Filer)',
+        data: cgtData,
+        backgroundColor: 'rgba(245,158,11,0.65)',
+        borderColor: '#f59e0b',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: chartOpts('₨')
+  });
+
+  // Holding period pie
+  var hMap = { 'under 1 year': 0, '1–2 years': 0, '2–3 years': 0, 'over 3 years': 0 };
+  log.forEach(t => { if (t.holdingPeriod && hMap[t.holdingPeriod] !== undefined) hMap[t.holdingPeriod]++; else hMap['under 1 year']++; });
+  destroyChart('holding');
+  charts['holding'] = new Chart(document.getElementById('chartHolding'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(hMap),
+      datasets: [{
+        data: Object.values(hMap),
+        backgroundColor: ['rgba(0,212,170,0.75)', 'rgba(59,130,246,0.75)', 'rgba(168,85,247,0.75)', 'rgba(245,158,11,0.75)'],
+        borderColor: ['#00d4aa', '#3b82f6', '#a855f7', '#f59e0b'],
+        borderWidth: 2,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#7b82a0', font: { size: 11 }, padding: 12, boxWidth: 12 } },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw + ' trade(s)' } }
+      },
+      cutout: '60%'
+    }
+  });
+
+  // Symbol table
+  var symMap = {};
+  log.forEach(t => {
+    var s = t.symbol || '—';
+    if (!symMap[s]) symMap[s] = { trades: 0, invested: 0, profit: 0, cgt: 0, wins: 0, returns: [] };
+    symMap[s].trades++;
+    symMap[s].invested += (+t.totalBuyCost || 0);
+    symMap[s].profit += (+t.netProfitFiler || 0);
+    symMap[s].cgt += (+t.cgtFiler || 0);
+    if ((+t.netProfitFiler || 0) > 0) symMap[s].wins++;
+    symMap[s].returns.push(+t.returnFiler || 0);
+  });
+  var symRows = Object.entries(symMap).sort((a, b) => b[1].profit - a[1].profit).map(([sym, d]) => {
+    var wr = Math.round(d.wins / d.trades * 100);
+    var avgRet = d.returns.length ? d.returns.reduce((s, r) => s + r, 0) / d.returns.length : 0;
+    var pc = d.profit >= 0 ? 'pos' : 'neg';
+    return '<tr>' +
+      '<td style="color:var(--ac);font-weight:600">' + sym + '</td>' +
+      '<td class="mono">' + d.trades + '</td>' +
+      '<td class="mono" style="text-align:right">' + fmt(d.invested) + '</td>' +
+      '<td class="' + pc + '">' + fmtS(d.profit) + '</td>' +
+      '<td class="mono" style="text-align:right;color:var(--am)">' + fmt(d.cgt) + '</td>' +
+      '<td style="text-align:right"><span style="color:' + (wr >= 50 ? 'var(--gr)' : 'var(--am)') + ';font-family:var(--mn)">' + wr + '%</span>' +
+      '<div class="wr-bar"><div class="wr-fill" style="width:' + wr + '%;background:' + (wr >= 50 ? 'var(--gr)' : 'var(--am)') + '"></div></div></td>' +
+      '<td class="' + (avgRet >= 0 ? 'pos' : 'neg') + '">' + (avgRet >= 0 ? '+' : '') + avgRet.toFixed(2) + '%</td></tr>';
   }).join('');
-  document.getElementById('histContent').innerHTML=
-    '<div class="htw"><table class="ht"><thead><tr>'+
-    '<th>Date</th><th>Symbol</th><th>Qty</th><th>Buy</th><th>Sell</th><th>Holding</th><th>Buy Cost</th><th>CGT (Filer)</th><th>Net Profit</th><th>Return</th>'+
-    '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  document.getElementById('symTableBody').innerHTML = symRows || '<tr><td colspan="7" style="text-align:center;color:var(--td);padding:2rem">No data</td></tr>';
 }
 
-function clearHist(){
-  if(!confirm('Clear all local trade history? Your Google Sheet data is NOT affected.'))return;
-  log=[];localStorage.removeItem('psx_trades');renderHist();
+function kpiCard(cls, icon, label, val, sub) {
+  return '<div class="kpi ' + cls + '"><div class="kpi-icon">' + icon + '</div><div class="kpi-label">' + label + '</div><div class="kpi-val">' + val + '</div><div class="kpi-sub">' + sub + '</div></div>';
 }
 
-function saveUrl(){
-  var url=document.getElementById('scriptUrl').value.trim();
-  if(!url.startsWith('https://script.google.com')){alert('That does not look like a valid Apps Script URL.');return;}
-  localStorage.setItem('psx_script_url',url);
-  updateBadge();alert('URL saved! You can now save trades to your Google Sheet.');
+function chartOpts(prefix) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#22263a',
+        borderColor: '#2e3350',
+        borderWidth: 1,
+        titleColor: '#e8eaf0',
+        bodyColor: '#7b82a0',
+        padding: 10,
+        callbacks: {
+          label: ctx => ' ' + (prefix || '') + Math.abs(ctx.raw).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#4a5070', font: { size: 10 }, maxRotation: 40 },
+        grid: { color: 'rgba(46,51,80,0.5)' }
+      },
+      y: {
+        ticks: {
+          color: '#4a5070', font: { size: 10 },
+          callback: v => (Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : v)
+        },
+        grid: { color: 'rgba(46,51,80,0.5)' }
+      }
+    }
+  };
 }
 
-async function testConn(){
-  var url=document.getElementById('scriptUrl').value.trim();
-  if(!url){alert('Paste your Apps Script URL first.');return;}
-  var sts=document.getElementById('testSts');
-  sts.textContent='Testing…';sts.className='ts ok';
-  try{
-    var res=await fetch(url+'?test=1');
-    var json=await res.json();
-    if(json.status==='ok'){sts.textContent='✓ Connected';sts.className='ts ok';}
-    else throw new Error('Bad response');
-  }catch(e){sts.textContent='✗ Failed — check URL & deployment';sts.className='ts er';}
+// ═══════════════════════════════════════════════
+// SAVE TO SHEET + AUTO SYNC
+// ═══════════════════════════════════════════════
+async function saveToSheet() {
+  var url = localStorage.getItem('psx_script_url');
+  if (!url) { alert('No Sheet URL saved. Go to ⚙️ Sheet Setup tab first.'); return; }
+  if (!last) { alert('Calculate a trade first.'); return; }
+  var btn = document.getElementById('saveBtn'), sts = document.getElementById('saveSts');
+  btn.disabled = true; sts.textContent = 'Saving…'; sts.className = 'sts ld';
+  var now = new Date();
+  var payload = {
+    date: now.toLocaleDateString('en-PK'), time: now.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
+    symbol: last.sym || '—', qty: last.qty, buyPrice: last.bp, sellPrice: last.sp, holdingPeriod: last.hl,
+    grossBuy: last.bgr, grossSell: last.sgr, brokerageBuy: last.bbr, salesTaxBuy: last.bst, leviesBuy: last.blv, totalBuyCost: last.btot,
+    brokerageSell: last.sbr, salesTaxSell: last.sst, leviesSell: last.slv,
+    cgtFiler: last.cgf, cgtNonFiler: last.cgnf, totalSellDedFiler: last.stf, totalSellDedNonFiler: last.stnf,
+    netProceedsFiler: last.nf, netProceedsNonFiler: last.nnf, netProfitFiler: last.prf, netProfitNonFiler: last.prnf,
+    returnFiler: last.retf, returnNonFiler: last.retnf
+  };
+
+  // ALWAYS save locally first — trade is never lost even if Sheet/sync fails
+  log.push({ ...payload, id: Date.now() });
+  localStorage.setItem('psx_trades', JSON.stringify(log));
+
+  try {
+    var res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    var json = await res.json();
+    if (json.status === 'ok') {
+      sts.textContent = '✓ Saved — syncing from Sheet…'; sts.className = 'sts ok';
+      // Pull full Sheet data (replaces local log with Sheet as source of truth)
+      await syncFromSheet(false);
+      sts.textContent = '✓ Saved & synced — dashboard updated'; sts.className = 'sts ok';
+    } else {
+      throw new Error(json.message || 'Unknown error');
+    }
+  } catch (err) {
+    sts.textContent = '✓ Saved locally (Sheet error: ' + err.message.substring(0, 30) + ')'; sts.className = 'sts er';
+  }
+  btn.disabled = false;
+  setTimeout(() => { sts.textContent = ''; sts.className = 'sts'; }, 7000);
 }
 
-function copyScript(){
-  var t=document.getElementById('scriptCode').textContent;
-  navigator.clipboard.writeText(t).then(()=>alert('Script copied!')).catch(()=>alert('Copy failed — select and copy manually.'));
-}
+// Pull all rows from Sheet and replace localStorage — keeps Sheet as source of truth
+async function syncFromSheet(showFeedback) {
+  var url = localStorage.getItem('psx_script_url');
+  var sEl = document.getElementById('syncStatus');
 
-function updateBadge(){
-  var url=localStorage.getItem('psx_script_url'),b=document.getElementById('sheetBadge');
-  if(url){b.textContent='Sheet: connected';b.style.cssText='border-color:var(--gr);color:var(--gr);background:var(--grd)';}
-  else{b.textContent='Sheet: not connected';b.style.cssText='';}
-}
-
-window.addEventListener('load',()=>{
-  var url=localStorage.getItem('psx_script_url');
-  if(url)document.getElementById('scriptUrl').value=url;
-  updateBadge();
-  initLock();
-});
-
-// ══ PASSWORD LOCK ══════════════════════════════════════
-// Default password hash — change via the UI, never stored in plain text
-var DEFAULT_HASH='b3ce69cf3861a914109a9e326b6b5c3e3f6d6e1a15c2e2b2d1e7f3a8c4d9b2e1'; // = "psx2025"
-
-function hashPw(pw){
-  // Simple deterministic hash (SHA-256 via SubtleCrypto is async; use sync djb2 + salt for localStorage)
-  var salt='psx_shahzad_2025';
-  var s=salt+pw;
-  var h=5381;
-  for(var i=0;i<s.length;i++){h=((h<<5)+h)^s.charCodeAt(i);h=h>>>0;}
-  return h.toString(16).padStart(8,'0');
-}
-
-function getStoredHash(){
-  return localStorage.getItem('psx_pw_hash') || hashPw('psx2025');
-}
-
-function initLock(){
-  // If already unlocked this session, skip
-  if(sessionStorage.getItem('psx_unlocked')==='1'){
-    document.getElementById('lockScreen').classList.add('hidden');
+  if (!url) {
+    if (showFeedback && sEl) { sEl.textContent = '✗ No Sheet URL saved'; sEl.style.color = 'var(--rd)'; }
     return;
+  }
+
+  if (showFeedback && sEl) { sEl.textContent = 'Syncing…'; sEl.style.color = 'var(--ac)'; }
+
+  try {
+    var fetchUrl = url + '?action=getAll&t=' + Date.now();
+    console.log('[PSX Sync] Fetching:', fetchUrl);
+    var res = await fetch(fetchUrl);
+    var text = await res.text();
+    console.log('[PSX Sync] Raw response:', text.substring(0, 300));
+
+    var json = JSON.parse(text);
+    console.log('[PSX Sync] Parsed — status:', json.status, '| rows:', json.rows ? json.rows.length : 'none');
+
+    if (json.status === 'ok' && Array.isArray(json.rows) && json.rows.length > 0) {
+      var keys = ["date","time","symbol","qty","buyPrice","sellPrice","holdingPeriod",
+        "grossBuy","grossSell","brokerageBuy","salesTaxBuy","leviesBuy","totalBuyCost",
+        "brokerageSell","salesTaxSell","leviesSell","cgtFiler","cgtNonFiler",
+        "totalSellDedFiler","totalSellDedNonFiler","netProceedsFiler","netProceedsNonFiler",
+        "netProfitFiler","netProfitNonFiler","returnFiler","returnNonFiler"];
+
+      log = json.rows.map(function(row, i) {
+        var t = {};
+        keys.forEach(function(k) { t[k] = (row[k] !== undefined && row[k] !== null) ? row[k] : ''; });
+        t.id = 'sheet_' + i + '_' + String(t.date).replace(/\//g,'') + String(t.symbol);
+        return t;
+      });
+
+      console.log('[PSX Sync] Mapped', log.length, 'trades. First:', JSON.stringify(log[0]));
+      localStorage.setItem('psx_trades', JSON.stringify(log));
+
+      var ts = new Date().toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' });
+      if (sEl) { sEl.textContent = '✓ Synced ' + log.length + ' trade(s) · ' + ts; sEl.style.color = 'var(--gr)'; }
+
+      // Always re-render whichever tabs are relevant
+      renderDash();
+      if (document.getElementById('tab-history').classList.contains('active')) renderHist();
+
+    } else if (json.status === 'ok' && Array.isArray(json.rows) && json.rows.length === 0) {
+      console.log('[PSX Sync] Sheet returned 0 rows (empty sheet or only header row)');
+      if (sEl) { sEl.textContent = 'Sheet has no trades yet'; sEl.style.color = 'var(--td)'; }
+
+    } else {
+      throw new Error(json.message || 'Unexpected response: ' + JSON.stringify(json).substring(0, 80));
+    }
+
+  } catch (err) {
+    console.error('[PSX Sync] Error:', err);
+    if (sEl) { sEl.textContent = '✗ Sync failed — see console (F12)'; sEl.style.color = 'var(--rd)'; }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════
+function exportCSV() {
+  if (!last) { alert('Calculate a trade first.'); return; }
+  var now = new Date(), r = last;
+  var h = ['Date', 'Time', 'Symbol', 'Qty', 'Buy Price', 'Sell Price', 'Holding Period', 'Gross Buy', 'Gross Sell', 'Brokerage Buy', 'Sales Tax Buy', 'Levies Buy', 'Total Buy Cost', 'Brokerage Sell', 'Sales Tax Sell', 'Levies Sell', 'CGT Filer', 'CGT Non-Filer', 'Total Sell Ded Filer', 'Total Sell Ded Non-Filer', 'Net Proceeds Filer', 'Net Proceeds Non-Filer', 'Net Profit Filer', 'Net Profit Non-Filer', 'Return% Filer', 'Return% Non-Filer'];
+  var d = [now.toLocaleDateString('en-PK'), now.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }), r.sym || '—', r.qty, r.bp, r.sp, r.hl, r.bgr, r.sgr, r.bbr, r.bst, r.blv, r.btot, r.sbr, r.sst, r.slv, r.cgf, r.cgnf, r.stf, r.stnf, r.nf, r.nnf, r.prf, r.prnf, r.retf, r.retnf];
+  dl(h.join(',') + '\n' + d.join(','), 'psx_trade_' + (r.sym || 'trade') + '_' + now.toISOString().slice(0, 10) + '.csv');
+}
+
+function exportAll() {
+  if (!log.length) { alert('No trades in local history.'); return; }
+  var h = Object.keys(log[0]).filter(k => k !== 'id');
+  var rows = log.map(t => h.map(k => t[k] ?? '').join(','));
+  dl(h.join(',') + '\n' + rows.join('\n'), 'psx_all_trades_' + new Date().toISOString().slice(0, 10) + '.csv');
+}
+
+function dl(content, name) {
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(content);
+  a.download = name; a.click();
+}
+
+// ═══════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════
+function renderHist() {
+  if (!log.length) {
+    document.getElementById('histContent').innerHTML = '<div class="he">No trades recorded yet.<br>Calculate a trade and click "Save to Sheet" to log it.</div>';
+    ['mT', 'mB', 'mC', 'mP'].forEach(id => document.getElementById(id).textContent = id === 'mT' ? '0' : '₨0');
+    return;
+  }
+  var tB = log.reduce((s, t) => s + (+t.totalBuyCost || 0), 0);
+  var tC = log.reduce((s, t) => s + (+t.cgtFiler || 0), 0);
+  var tP = log.reduce((s, t) => s + (+t.netProfitFiler || 0), 0);
+  document.getElementById('mT').textContent = log.length;
+  document.getElementById('mB').textContent = fmtK(tB);
+  document.getElementById('mC').textContent = fmtK(tC);
+  var mP = document.getElementById('mP');
+  mP.textContent = fmtK(tP); mP.style.color = tP >= 0 ? 'var(--gr)' : 'var(--rd)';
+  var rows = [...log].reverse().map(t => {
+    var p = +t.netProfitFiler || 0, pc = p > 0 ? 'ps' : p < 0 ? 'ng' : 'nm';
+    return '<tr><td>' + t.date + '</td><td style="color:var(--ac);font-weight:500">' + (t.symbol || '—') + '</td>' +
+      '<td class="nm">' + ((+t.qty || 0).toLocaleString()) + '</td>' +
+      '<td class="nm">₨' + (+t.buyPrice || 0).toFixed(2) + '</td>' +
+      '<td class="nm">₨' + (+t.sellPrice || 0).toFixed(2) + '</td>' +
+      '<td>' + (t.holdingPeriod || '—') + '</td>' +
+      '<td class="nm">' + fmt(+t.totalBuyCost || 0) + '</td>' +
+      '<td class="nm">' + fmt(+t.cgtFiler || 0) + '</td>' +
+      '<td class="' + pc + '">' + fmtS(p) + '</td>' +
+      '<td class="' + pc + '">' + (+t.returnFiler || 0).toFixed(2) + '%</td></tr>';
+  }).join('');
+  document.getElementById('histContent').innerHTML =
+    '<div class="htw"><table class="ht"><thead><tr>' +
+    '<th>Date</th><th>Symbol</th><th>Qty</th><th>Buy</th><th>Sell</th><th>Holding</th><th>Buy Cost</th><th>CGT (Filer)</th><th>Net Profit</th><th>Return</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+function clearHist() {
+  if (!confirm('Clear all local trade history? Your Google Sheet data is NOT affected.')) return;
+  log = []; localStorage.removeItem('psx_trades'); renderHist();
+  // destroy charts so they reinit cleanly next time
+  Object.keys(charts).forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } });
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════
+function saveUrl() {
+  var url = document.getElementById('scriptUrl').value.trim();
+  if (!url.startsWith('https://script.google.com')) { alert('That does not look like a valid Apps Script URL.'); return; }
+  localStorage.setItem('psx_script_url', url);
+  updateBadge();
+  alert('URL saved! You can now save trades to your Google Sheet.');
+}
+
+async function testConn() {
+  var url = document.getElementById('scriptUrl').value.trim();
+  if (!url) { alert('Paste your Apps Script URL first.'); return; }
+  var sts = document.getElementById('testSts');
+  sts.textContent = 'Testing…'; sts.className = 'ts ok';
+  try {
+    var res = await fetch(url + '?test=1');
+    var json = await res.json();
+    if (json.status === 'ok') { sts.textContent = '✓ Connected'; sts.className = 'ts ok'; }
+    else throw new Error('Bad response');
+  } catch (e) { sts.textContent = '✗ Failed — check URL & deployment'; sts.className = 'ts er'; }
+}
+
+function copyScript() {
+  var t = document.getElementById('scriptCode').textContent;
+  navigator.clipboard.writeText(t).then(() => alert('Script copied!')).catch(() => alert('Copy failed — select and copy manually.'));
+}
+
+function updateBadge() {
+  var url = localStorage.getItem('psx_script_url'), b = document.getElementById('sheetBadge');
+  if (url) { b.textContent = 'Sheet: connected'; b.style.cssText = 'border-color:var(--gr);color:var(--gr);background:var(--grd)'; }
+  else { b.textContent = 'Sheet: not connected'; b.style.cssText = ''; }
+}
+
+// ═══════════════════════════════════════════════
+// PASSWORD LOCK
+// ═══════════════════════════════════════════════
+function hashPw(pw) {
+  var salt = 'psx_shahzad_2025', s = salt + pw, h = 5381;
+  for (var i = 0; i < s.length; i++) { h = ((h << 5) + h) ^ s.charCodeAt(i); h = h >>> 0; }
+  return h.toString(16).padStart(8, '0');
+}
+function getStoredHash() { return localStorage.getItem('psx_pw_hash') || hashPw('psx2025'); }
+function initLock() {
+  if (sessionStorage.getItem('psx_unlocked') === '1') {
+    document.getElementById('lockScreen').classList.add('hidden'); return;
   }
   document.getElementById('pwInput').focus();
 }
-
-function unlock(){
-  var pw=document.getElementById('pwInput').value;
-  var err=document.getElementById('lockErr');
-  if(!pw){err.textContent='Please enter your password.';return;}
-  if(hashPw(pw)===getStoredHash()){
-    sessionStorage.setItem('psx_unlocked','1');
+function unlock() {
+  var pw = document.getElementById('pwInput').value;
+  var err = document.getElementById('lockErr');
+  if (!pw) { err.textContent = 'Please enter your password.'; return; }
+  if (hashPw(pw) === getStoredHash()) {
+    sessionStorage.setItem('psx_unlocked', '1');
     document.getElementById('lockScreen').classList.add('hidden');
-    err.textContent='';
+    err.textContent = '';
   } else {
-    err.textContent='Incorrect password. Try again.';
-    var inp=document.getElementById('pwInput');
-    inp.classList.add('err');
-    inp.value='';
-    inp.focus();
-    setTimeout(()=>inp.classList.remove('err'),400);
+    err.textContent = 'Incorrect password. Try again.';
+    var inp = document.getElementById('pwInput');
+    inp.classList.add('err'); inp.value = ''; inp.focus();
+    setTimeout(() => inp.classList.remove('err'), 400);
   }
 }
-
-function togglePwVis(){
-  var inp=document.getElementById('pwInput');
-  inp.type=inp.type==='password'?'text':'password';
-  document.getElementById('eyeBtn').textContent=inp.type==='password'?'👁':'🙈';
+function togglePwVis() {
+  var inp = document.getElementById('pwInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  document.getElementById('eyeBtn').textContent = inp.type === 'password' ? '👁' : '🙈';
 }
-
-function openChangePw(){
+function openChangePw() {
   document.getElementById('changePwModal').classList.add('open');
   document.getElementById('curPw').focus();
-  document.getElementById('modalErr').textContent='';
-  ['curPw','newPw','conPw'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modalErr').textContent = '';
+  ['curPw', 'newPw', 'conPw'].forEach(id => document.getElementById(id).value = '');
 }
-
-function closeChangePw(){
-  document.getElementById('changePwModal').classList.remove('open');
-}
-
-function savePw(){
-  var cur=document.getElementById('curPw').value;
-  var nw=document.getElementById('newPw').value;
-  var cn=document.getElementById('conPw').value;
-  var err=document.getElementById('modalErr');
-  if(hashPw(cur)!==getStoredHash()){err.textContent='Current password is incorrect.';return;}
-  if(nw.length<6){err.textContent='New password must be at least 6 characters.';return;}
-  if(nw!==cn){err.textContent='New passwords do not match.';return;}
-  localStorage.setItem('psx_pw_hash',hashPw(nw));
+function closeChangePw() { document.getElementById('changePwModal').classList.remove('open'); }
+function savePw() {
+  var cur = document.getElementById('curPw').value;
+  var nw = document.getElementById('newPw').value;
+  var cn = document.getElementById('conPw').value;
+  var err = document.getElementById('modalErr');
+  if (hashPw(cur) !== getStoredHash()) { err.textContent = 'Current password is incorrect.'; return; }
+  if (nw.length < 6) { err.textContent = 'New password must be at least 6 characters.'; return; }
+  if (nw !== cn) { err.textContent = 'New passwords do not match.'; return; }
+  localStorage.setItem('psx_pw_hash', hashPw(nw));
   closeChangePw();
   alert('✓ Password changed successfully!');
 }
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+window.addEventListener('load', () => {
+  var url = localStorage.getItem('psx_script_url');
+  if (url) document.getElementById('scriptUrl').value = url;
+  updateBadge();
+  initLock();
+});
 </script>
 </body>
 </html>
