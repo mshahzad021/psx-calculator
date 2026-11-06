@@ -1091,6 +1091,7 @@ function updateBadge() {
 // ═══════════════════════════════════════════════
 // PASSWORD LOCK
 // ═══════════════════════════════════════════════
+  <!--
 function hashPw(pw) {
   var salt = 'psx_shahzad_2025', s = salt + pw, h = 5381;
   for (var i = 0; i < s.length; i++) { h = ((h << 5) + h) ^ s.charCodeAt(i); h = h >>> 0; }
@@ -1141,8 +1142,8 @@ function savePw() {
   localStorage.setItem('psx_pw_hash', hashPw(nw));
   closeChangePw();
   alert('✓ Password changed successfully!');
-}
-
+} 
+-->
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
