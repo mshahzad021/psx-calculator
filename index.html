@@ -1089,69 +1089,12 @@ function updateBadge() {
 }
 
 // ═══════════════════════════════════════════════
-// PASSWORD LOCK
-// ═══════════════════════════════════════════════
-  <!--
-function hashPw(pw) {
-  var salt = 'psx_shahzad_2025', s = salt + pw, h = 5381;
-  for (var i = 0; i < s.length; i++) { h = ((h << 5) + h) ^ s.charCodeAt(i); h = h >>> 0; }
-  return h.toString(16).padStart(8, '0');
-}
-function getStoredHash() { return localStorage.getItem('psx_pw_hash') || hashPw('psx2025'); }
-function initLock() {
-  if (sessionStorage.getItem('psx_unlocked') === '1') {
-    document.getElementById('lockScreen').classList.add('hidden'); return;
-  }
-  document.getElementById('pwInput').focus();
-}
-function unlock() {
-  var pw = document.getElementById('pwInput').value;
-  var err = document.getElementById('lockErr');
-  if (!pw) { err.textContent = 'Please enter your password.'; return; }
-  if (hashPw(pw) === getStoredHash()) {
-    sessionStorage.setItem('psx_unlocked', '1');
-    document.getElementById('lockScreen').classList.add('hidden');
-    err.textContent = '';
-  } else {
-    err.textContent = 'Incorrect password. Try again.';
-    var inp = document.getElementById('pwInput');
-    inp.classList.add('err'); inp.value = ''; inp.focus();
-    setTimeout(() => inp.classList.remove('err'), 400);
-  }
-}
-function togglePwVis() {
-  var inp = document.getElementById('pwInput');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  document.getElementById('eyeBtn').textContent = inp.type === 'password' ? '👁' : '🙈';
-}
-function openChangePw() {
-  document.getElementById('changePwModal').classList.add('open');
-  document.getElementById('curPw').focus();
-  document.getElementById('modalErr').textContent = '';
-  ['curPw', 'newPw', 'conPw'].forEach(id => document.getElementById(id).value = '');
-}
-function closeChangePw() { document.getElementById('changePwModal').classList.remove('open'); }
-function savePw() {
-  var cur = document.getElementById('curPw').value;
-  var nw = document.getElementById('newPw').value;
-  var cn = document.getElementById('conPw').value;
-  var err = document.getElementById('modalErr');
-  if (hashPw(cur) !== getStoredHash()) { err.textContent = 'Current password is incorrect.'; return; }
-  if (nw.length < 6) { err.textContent = 'New password must be at least 6 characters.'; return; }
-  if (nw !== cn) { err.textContent = 'New passwords do not match.'; return; }
-  localStorage.setItem('psx_pw_hash', hashPw(nw));
-  closeChangePw();
-  alert('✓ Password changed successfully!');
-} 
--->
-// ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
 window.addEventListener('load', () => {
   var url = localStorage.getItem('psx_script_url');
   if (url) document.getElementById('scriptUrl').value = url;
   updateBadge();
-  initLock();
 });
 </script>
 </body>
