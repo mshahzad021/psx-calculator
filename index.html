@@ -211,86 +211,10 @@ table.ht tbody tr:hover td{background:var(--sf2)}
 .dash-empty{text-align:center;padding:5rem 2rem;color:var(--td);font-size:14px;line-height:2}
 .dash-empty span{font-size:36px;display:block;margin-bottom:12px}
 
-/* ─── LOCK ─── */
-#lockScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem}
-#lockScreen.hidden{display:none}
-.lock-card{width:100%;max-width:380px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;position:relative}
-.lock-icon{width:56px;height:56px;background:var(--acd);border:1px solid var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
-.lock-title{font-size:18px;font-weight:600;color:var(--tx);text-align:center}
-.lock-sub{font-size:13px;color:var(--tm);text-align:center;margin-top:-8px}
-.lock-field{width:100%;display:flex;flex-direction:column;gap:6px}
-.lock-field label{font-size:12px;color:var(--tm);font-weight:500}
-.lock-pw-wrap{position:relative;width:100%}
-#pwInput{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--mn);font-size:15px;padding:11px 44px 11px 14px;letter-spacing:.1em;transition:border-color .15s}
-#pwInput:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
-#pwInput.err{border-color:var(--rd);box-shadow:0 0 0 3px rgba(239,68,68,.08);animation:shake .3s}
-.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--td);font-size:16px;padding:2px;transition:color .15s}
-.pw-eye:hover{color:var(--tm)}
-.lock-btn{width:100%;padding:12px;font-size:15px;font-weight:600;border-radius:var(--r);border:none;background:var(--ac);color:#0f1117;cursor:pointer;transition:opacity .15s}
-.lock-btn:hover{opacity:.88}
-.lock-err{font-size:12px;color:var(--rd);text-align:center;min-height:18px}
-.lock-hint{font-size:11px;color:var(--td);text-align:center;margin-top:4px}
-.lock-change{position:absolute;top:14px;right:14px;font-size:11px;color:var(--td);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:4px}
-.lock-change:hover{color:var(--tm);background:var(--sf2)}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-
-#changePwModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:1.5rem;display:none}
-#changePwModal.open{display:flex}
-.modal-card{width:100%;max-width:360px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:2rem;display:flex;flex-direction:column;gap:1rem}
-.modal-card h3{font-size:15px;font-weight:600}
-.modal-card p{font-size:12px;color:var(--tm);line-height:1.6;margin-top:-4px}
-.modal-field{display:flex;flex-direction:column;gap:6px}
-.modal-field label{font-size:12px;color:var(--tm);font-weight:500}
-.modal-field input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--mn);font-size:14px;padding:9px 12px}
-.modal-field input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
-.modal-actions{display:flex;gap:10px;margin-top:4px}
-.modal-actions button{flex:1;padding:9px;font-size:13px;font-weight:600;border-radius:var(--r);border:none;cursor:pointer}
-.modal-cancel{background:var(--sf2);color:var(--tm)}
-.modal-save{background:var(--ac);color:#0f1117}
-.modal-err{font-size:12px;color:var(--rd)}
-
 footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-align:center;font-size:12px;color:var(--td)}
 </style>
 </head>
 <body>
-
-<!-- LOCK SCREEN -->
-<div id="lockScreen">
-  <div class="lock-card">
-    <button class="lock-change" onclick="openChangePw()" title="Change password">⚙ Change password</button>
-    <div class="lock-icon">🔒</div>
-    <div>
-      <div class="lock-title">PSX Trade Calculator</div>
-      <div class="lock-sub">Enter your password to continue</div>
-    </div>
-    <div class="lock-field">
-      <label>Password</label>
-      <div class="lock-pw-wrap">
-        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unlock()"/>
-        <button class="pw-eye" onclick="togglePwVis()" id="eyeBtn" title="Show/hide">👁</button>
-      </div>
-    </div>
-    <button class="lock-btn" onclick="unlock()">Unlock →</button>
-    <div class="lock-err" id="lockErr"></div>
-    <div class="lock-hint">Session stays unlocked until you close the tab</div>
-  </div>
-</div>
-
-<!-- CHANGE PASSWORD MODAL -->
-<div id="changePwModal">
-  <div class="modal-card">
-    <h3>🔑 Set new password</h3>
-    <p>First time? The default password is <strong style="color:var(--ac);font-family:var(--mn)">psx2025</strong> — change it now to something only you know.</p>
-    <div class="modal-field"><label>Current password</label><input type="password" id="curPw" placeholder="Current password"/></div>
-    <div class="modal-field"><label>New password</label><input type="password" id="newPw" placeholder="Min 6 characters"/></div>
-    <div class="modal-field"><label>Confirm new password</label><input type="password" id="conPw" placeholder="Repeat new password"/></div>
-    <div class="modal-err" id="modalErr"></div>
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeChangePw()">Cancel</button>
-      <button class="modal-save" onclick="savePw()">Save password</button>
-    </div>
-  </div>
-</div>
 
 <header>
   <div class="hi">
@@ -361,6 +285,7 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 
 <!-- ═══ DASHBOARD ═══ -->
 <div class="tp" id="tab-dashboard">
+  <div class="nb demo-note" style="display:none;margin-bottom:1rem"><strong style="color:var(--am)">Demo data</strong> — sample trades so you can preview the dashboard. Connect your Google Sheet in <strong>Sheet Setup</strong> to see your real trades.</div>
   <div id="dashEmpty" class="dash-empty" style="display:none">
     <span>📊</span>
     No trades recorded yet.<br>
@@ -438,6 +363,7 @@ footer{margin-top:3rem;border-top:1px solid var(--bd);padding:1.5rem 0;text-alig
 
 <!-- ═══ HISTORY ═══ -->
 <div class="tp" id="tab-history">
+  <div class="nb demo-note" style="display:none;margin-bottom:1rem"><strong style="color:var(--am)">Demo data</strong> — sample trades so you can preview the dashboard. Connect your Google Sheet in <strong>Sheet Setup</strong> to see your real trades.</div>
   <div class="sec">
     <div class="sl">Monthly summary</div>
     <div class="ms">
@@ -554,6 +480,7 @@ var charts = {};
 // TABS
 // ═══════════════════════════════════════════════
 function switchTab(name, el) {
+  updateDemo();
   document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
@@ -587,6 +514,37 @@ function levies(v) { return v * (0.000001 + 0.00005 + 0.0001 + 0.00015); }
 var CGF = [.15, .125, .10, .075], CGNF = [.30, .25, .20, .15];
 var CGLf = ['15%', '12.5%', '10%', '7.5%'], CGLn = ['30%', '25%', '20%', '15%'];
 function cgt(profit, p, filer) { return profit <= 0 ? 0 : profit * (filer ? CGF[p] : CGNF[p]); }
+
+function buildDemo() {
+  var H = ['under 1 year', '1–2 years', '2–3 years', 'over 3 years'];
+  function row(date, sym, qty, bp, sp, h) {
+    var pct = 0.15, flat = 0.03;
+    var bgr = r2(qty*bp), bbr = r2(broker(bp,qty,pct,flat)), bst = r2(stax(bbr)), blv = r2(levies(bgr)), btot = r2(bgr+bbr+bst+blv);
+    var sgr = r2(qty*sp), sbr = r2(broker(sp,qty,pct,flat)), sst = r2(stax(sbr)), slv = r2(levies(sgr)), sd = r2(sbr+sst+slv);
+    var tp = r2(sgr-btot), cf = r2(cgt(tp,h,true)), cn = r2(cgt(tp,h,false)), sf = r2(sd+cf), sn = r2(sd+cn);
+    var nf = r2(sgr-sf), nn = r2(sgr-sn), pf = r2(nf-btot), pn = r2(nn-btot);
+    return { date: date, time: '10:30 AM', symbol: sym, qty: qty, buyPrice: bp, sellPrice: sp, holdingPeriod: H[h],
+      grossBuy: bgr, grossSell: sgr, brokerageBuy: bbr, salesTaxBuy: bst, leviesBuy: blv, totalBuyCost: btot,
+      brokerageSell: sbr, salesTaxSell: sst, leviesSell: slv, cgtFiler: cf, cgtNonFiler: cn,
+      totalSellDedFiler: sf, totalSellDedNonFiler: sn, netProceedsFiler: nf, netProceedsNonFiler: nn,
+      netProfitFiler: pf, netProfitNonFiler: pn, returnFiler: btot>0 ? r2(pf/btot*100) : 0, returnNonFiler: btot>0 ? r2(pn/btot*100) : 0,
+      id: 'demo_' + date.replace(/\//g,'') + sym };
+  }
+  return [
+    row('12/05/2026','ENGRO',500,285.50,312.40,0), row('28/05/2026','LUCK',200,780,742.30,0),
+    row('09/06/2026','HUBC',1000,128.40,141.80,0), row('24/06/2026','OGDC',800,142.20,158.60,1),
+    row('15/07/2026','PPL',600,118.50,109.20,0), row('02/08/2026','MEBL',400,245,281.50,1),
+    row('21/08/2026','SYS',300,98.40,112.70,0), row('10/09/2026','ENGRO',400,296,330.25,0),
+    row('29/09/2026','FFC',700,410,452.80,2), row('18/10/2026','HUBC',900,136.80,129.40,0),
+    row('30/10/2026','UNITY',5000,18.50,21.20,0)
+  ];
+}
+// Demo mode: sample trades are shown until a Google Sheet URL is saved
+var demoMode = !localStorage.getItem('psx_script_url');
+if (demoMode) log = buildDemo();
+function updateDemo() {
+  document.querySelectorAll('.demo-note').forEach(function(e){ e.style.display = demoMode ? 'block' : 'none'; });
+}
 
 // ═══════════════════════════════════════════════
 // CALCULATOR
@@ -1047,6 +1005,7 @@ function renderHist() {
 }
 
 function clearHist() {
+  if (demoMode) { alert('This is demo data. Connect your Sheet to manage real trades.'); return; }
   if (!confirm('Clear all local trade history? Your Google Sheet data is NOT affected.')) return;
   log = []; localStorage.removeItem('psx_trades'); renderHist();
   // destroy charts so they reinit cleanly next time
@@ -1060,8 +1019,11 @@ function saveUrl() {
   var url = document.getElementById('scriptUrl').value.trim();
   if (!url.startsWith('https://script.google.com')) { alert('That does not look like a valid Apps Script URL.'); return; }
   localStorage.setItem('psx_script_url', url);
+  if (demoMode) { demoMode = false; log = JSON.parse(localStorage.getItem('psx_trades') || '[]'); }
+  updateDemo();
   updateBadge();
-  alert('URL saved! You can now save trades to your Google Sheet.');
+  alert('URL saved! Syncing your real trades now.');
+  syncFromSheet(true);
 }
 
 async function testConn() {
@@ -1095,6 +1057,7 @@ window.addEventListener('load', () => {
   var url = localStorage.getItem('psx_script_url');
   if (url) document.getElementById('scriptUrl').value = url;
   updateBadge();
+  updateDemo();
 });
 </script>
 </body>
